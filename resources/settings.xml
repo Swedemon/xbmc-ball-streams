@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="100028">
+        <setting id="username" type="text" label="100001" default="" />
+        <setting id="password" type="text" label="100002" default="" option="hidden" />
+        <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />
+        <setting id="resolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
+        <setting id="flash" type="bool" label="100017" default="true" />
+        <setting id="truelive" type="bool" label="100026" default="true" />
+        <setting id="istream" type="bool" label="100016" default="true" />
+        <setting id="wmv" type="bool" label="100027" default="true" />
+        <setting id="shortnames" type="bool" label="100020" default="true" />
+	</category>
+</settings>
