@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Steps to install xbmc-ball-streams addon:
+
+1. Download the latest zip file that matches your version of Kodi (XBMC): 
+	> https://github.com/Swedemon/xbmc-ball-streams/tree/master/downloads
+
+2. Follow these instructions within Kodi (XBMC): 
+	> http://kodi.wiki/view/HOW-TO:Install_an_Add-on_from_a_zip_file
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Note:  If the install failed ensure you downloaded the correct version,
+       otherwise post error details here for assistance: 
+	> http://www4.ballstreams.com/support/categories/9/general+homebrew/4056/XBMC+Plugin
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
