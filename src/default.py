@@ -28,7 +28,7 @@ def ARCHIVES():
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
-# a list of years for archives
+# a list of months/years for archives
 # @param session the user session to make api calls with
 def ARCHIVES_BY_DATE(session):
     print 'ARCHIVES_BY_DATE(session)'
@@ -36,47 +36,23 @@ def ARCHIVES_BY_DATE(session):
     # Retrieve the available dates
     dates = ballstreams.availableDates(session)
 
-    # Find unique years
-    years = []
+    # Find unique months/years
+    monthsYears = []
     for date in dates:
-        if years.count(date.year) < 1:
-            years.append(date.year)
+        current = str(date.month) + '/' + str(date.year)
+        if monthsYears.count(current) < 1:
+            monthsYears.append(current)
 
     # Count total number of items for ui
-    totalItems = len(years)
-    
-    # Add directories for years
-    for year in years:
-        params = {
-            'year': str(year)
-        }
-        utils.addDir(str(year), utils.Mode.ARCHIVES_BY_DATE_YEAR, '', params, totalItems)
-
-# Method to draw the archives by date screen
-# which scrapes the external source and presents
-# a list of months for a given year of archives
-# @param session the user session to make api calls with
-# @param year the year to obtain valid months for
-def ARCHIVES_BY_DATE_YEAR(session, year):
-    print 'ARCHIVES_BY_DATE_YEAR(session, year)'
-    print 'Year: ' + str(year)
-
-    # Retrieve the available dates
-    dates = ballstreams.availableDates(session)
-
-    # Find unique months
-    months = []
-    for date in dates:
-        if year == date.year and months.count(date.month) < 1:
-            months.append(date.month)
-
-    # Count total number of items for ui
-    totalItems = len(months)
+    totalItems = len(monthsYears)
 
     # Add directories for months
-    for month in months:
+    for monthYear in monthsYears:
         # Create datetime for string formatting
-        date = datetime.date(year, month, 1)
+        index = monthYear.index("/")
+        year = monthYear[index+1:]
+        month = monthYear[:index]
+        date = datetime.date(int(year), int(month), 1)
         params = {
             'year': str(year),
             'month': str(month)
@@ -166,7 +142,7 @@ def ARCHIVES_BY_TEAM(session, shortNames):
         params = {
             'team': team.name
         }
-        teamName = team.name
+        teamName = team.league + ': ' + team.name
         # if shortNames:
             # teamName = ballstreams.shortTeamName(team.name, addonPath)
         utils.addDir(teamName, utils.Mode.ARCHIVES_BY_TEAM_EVENTS, '', params, totalItems)
@@ -345,7 +321,8 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
             if event.period == None or str(event.period) == '':
                 prefix = '[' + addon.getLocalizedString(100029) + '] ' if event.isOnDemand != True else ''
             else:
-                title = title + ' - ' + awayScore + '-' + homeScore
+                if not(awayScore == '0' and homeScore == '0'):
+                    title = title + ' - ' + awayScore + '-' + homeScore
                 prefix = '[' + addon.getLocalizedString(100030) + '] ' if event.isOnDemand != True else ''
 
             suffix = ''

@@ -1,3 +1,7 @@
+[b]2.8.8[/b]
+- Changed: Skip on-demand year filter for faster access
+- Changed: Display league with on-demand team name
+
 [b]2.8.7[/b]
 - Changed: All API calls are now encrypted (https)
 - Fixed: Corrected server locations Asia and Europe

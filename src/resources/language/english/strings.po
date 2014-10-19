@@ -51,11 +51,11 @@ msgid "Account login failed. Please check settings."
 msgstr ""
 
 msgctxt "#100013"
-msgid "Membership Expired"
+msgid "Membership Inactive"
 msgstr ""
 
 msgctxt "#100014"
-msgid "Your premium account membership has expired."
+msgid "Your premium account membership is inactive."
 msgstr ""
 
 msgctxt "#100015"
@@ -63,11 +63,11 @@ msgid "Refresh"
 msgstr ""
 
 msgctxt "#100016"
-msgid "Enable iStream's"
+msgid "Enable iStreams"
 msgstr ""
 
 msgctxt "#100017"
-msgid "Enable Flash Stream's"
+msgid "Enable Flash Streams"
 msgstr ""
 
 msgctxt "#100018"
@@ -75,7 +75,7 @@ msgid "IP Exception Failed"
 msgstr ""
 
 msgctxt "#100019"
-msgid "You can try creating one via the website."
+msgid "You can try creating an IP Exception via the website.  If problem persists then reset password."
 msgstr ""
 
 msgctxt "#100020"
@@ -103,7 +103,7 @@ msgid "Location"
 msgstr ""
 
 msgctxt "#100026"
-msgid "Enable TrueLive Streams"
+msgid "Enable TrueLive Streams (rtmp)"
 msgstr ""
 
 msgctxt "#100027"

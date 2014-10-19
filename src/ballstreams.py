@@ -72,6 +72,29 @@ class Event():
         else:
             return repr('Future Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.time)
 
+# Represents a highlight
+class Highlight():
+    # Creates a new highlight instance
+    # @param streamId the stream id
+    # @param event the event name (usually a league)
+    # @param homeTeam the home team name
+    # @param awayTeam the away team name
+    # @param lowQualitySrc source url
+    # @param medQualitySrc source url
+    # @param highQualitySrc source url
+    # @param homeSrc home source url
+    # @param awaySrc away source url
+    def __init__(self, streamId, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc):
+        self.streamId = streamId
+        self.event = event
+        self.homeTeam = homeTeam
+        self.awayTeam = awayTeam
+        self.lowQualitySrc = lowQualitySrc
+        self.medQualitySrc = medQualitySrc
+        self.highQualitySrc = highQualitySrc
+        self.homeSrc = homeSrc
+        self.awaySrc = awaySrc
+
 # Represents a team
 class Team():
 
@@ -209,13 +232,13 @@ def availableDates(session):
 
     # Parse the on demand dates response
     js = json.loads(page)
-
+    
     # Check the api request was successful
     __checkStatus(js)
 
     # Get the dates array
     dates = js['dates']
-
+    
     # Check dates
     if dates == None:
         raise ApiException('API Error: The dates were null');
@@ -298,6 +321,38 @@ def eventsForDate(session, date):
     
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
     return __parseEvents(url)
+
+# Method to get the highlights for a given date
+# @param session the session details to login with
+# @param date a date instance to return the highlights for
+# @return a list of highlights
+def highlightsForDate(session, date):
+    # Strip the date into usable strings for formatting
+    year = str(date.year)
+    month = '%02d' % (date.month,)
+    day = '%02d' % (date.day,)
+    
+    # Setup events for date data
+    data = urllib.urlencode({
+        'token': session.token,
+        'date': month + '/' + day + '/' + year
+    })
+    
+    url = 'https://api.ballstreams.com/GetHighlights?' + data
+    print 'highlights: ' + url
+
+    # Get response for events
+    request = __setupRequest(url)
+    response = urllib2.urlopen(request)
+    page = response.read()
+    response.close()
+
+    # Parse the events response
+    try:
+        js = json.loads(page)
+        return js
+    except Exception as e:
+        return None
 
 # Method to get the events for a given team
 # @param session the session details to login with
@@ -759,6 +814,7 @@ def shortTeamName(teamName, root):
 def __setupRequest(url):
     request = urllib2.Request(url)
     request.add_header('From', 'xbmc-ball-streams')
+    print str(url)
 
     return request
 
