@@ -15,7 +15,7 @@ msgid "No Stream"
 msgstr ""
 
 msgctxt "#100004"
-msgid "Sorry but a valid wmv stream was not found."
+msgid "Sorry but a valid stream was not found."
 msgstr ""
 
 msgctxt "#100005"
@@ -124,4 +124,16 @@ msgstr ""
 
 msgctxt "#100031"
 msgid "Resolution"
+msgstr ""
+
+msgctxt "#100032"
+msgid "Display Live Scores"
+msgstr ""
+
+msgctxt "#100033"
+msgid "Stream Settings"
+msgstr ""
+
+msgctxt "#100034"
+msgid "Display Fanart"
 msgstr ""

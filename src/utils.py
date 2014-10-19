@@ -64,11 +64,12 @@ def parseParamString(params, key):
 # @param image the image to display as the thumbnail
 # @param totalItems [optional] the total number of items to add to show progress
 # @return a flag indicating success
-def addLink(name, url, image, totalItems = None):
+def addLink(name, url, image, totalItems = None, showfanart = None):
     ok = True
     item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
-    item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
+    if showfanart:
+        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item)
     else:
@@ -82,7 +83,7 @@ def addLink(name, url, image, totalItems = None):
 # @param params a dictionary of params to append
 # @param totalItems [optional] the total number of items to add to show progress
 # @return a flag indicating success
-def addDir(name, mode, image, params, totalItems = None):
+def addDir(name, mode, image, params, totalItems = None, showfanart = None):
     url = sys.argv[0] + "?mode=" + str(mode)
     if params != None:
         for k, v in params.iteritems():
@@ -90,7 +91,8 @@ def addDir(name, mode, image, params, totalItems = None):
     ok = True
     item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
-    item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
+    if showfanart:
+        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item, isFolder = True)
     else:

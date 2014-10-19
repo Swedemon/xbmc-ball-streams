@@ -1,6 +1,10 @@
 [b]2.8.8[/b]
+- Added: Display score option added to settings for live games
+- Added: Click final live games searches for current day on-demand games
+- Added: Setting to toggle display of fanart
 - Changed: Skip on-demand year filter for faster access
 - Changed: Display league with on-demand team name
+- Changed: Reorganize stream settings as a separate category
 
 [b]2.8.7[/b]
 - Changed: All API calls are now encrypted (https)

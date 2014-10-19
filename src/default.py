@@ -13,18 +13,19 @@ dataPath = 'special://profile/addon_data/' + addonId
 if not os.path.exists: os.makedirs(dataPath)
 addon = xbmcaddon.Addon(id = addonId)
 addonPath = addon.getAddonInfo('path')
+now = datetime.datetime.now()
 
 # Method to draw the home screen
 def HOME():
     print 'HOME()'
-    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ARCHIVES, '', None)
-    utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None)
+    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ARCHIVES, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, showfanart)
 
 # Method to draw the archives screen
 def ARCHIVES():
     print 'ARCHIVES()'
-    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ARCHIVES_BY_DATE, '', None)
-    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ARCHIVES_BY_TEAM, '', None)
+    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ARCHIVES_BY_DATE, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ARCHIVES_BY_TEAM, '', None, showfanart)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -57,7 +58,7 @@ def ARCHIVES_BY_DATE(session):
             'year': str(year),
             'month': str(month)
         }
-        utils.addDir(date.strftime('%B %Y'), utils.Mode.ARCHIVES_BY_DATE_MONTH, '', params, totalItems)
+        utils.addDir(date.strftime('%B %Y'), utils.Mode.ARCHIVES_BY_DATE_MONTH, '', params, totalItems, showfanart)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -91,7 +92,7 @@ def ARCHIVES_BY_DATE_MONTH(session, year, month):
             'month': str(month),
             'day': str(day)
         }
-        utils.addDir(date.strftime('%A %d %B %Y'), utils.Mode.ARCHIVES_BY_DATE_DAY, '', params, totalItems)
+        utils.addDir(date.strftime('%A %d %B %Y'), utils.Mode.ARCHIVES_BY_DATE_DAY, '', params, totalItems, showfanart)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -114,7 +115,11 @@ def ARCHIVES_BY_DATE_DAY(session, year, month, day, istream, flash, rtmp, wmv, s
 
     # Retrieve the events
     date = datetime.date(year, month, day)
-    events = ballstreams.eventsForDate(session, date)
+    try:
+        events = ballstreams.eventsForDate(session, date)
+    except Exception as e:
+        print 'Warning no events for date: ' + str(date) + ' exception raised: ' + str(e)
+        return None
 
     params = {
         'year': str(year),
@@ -145,7 +150,7 @@ def ARCHIVES_BY_TEAM(session, shortNames):
         teamName = team.league + ': ' + team.name
         # if shortNames:
             # teamName = ballstreams.shortTeamName(team.name, addonPath)
-        utils.addDir(teamName, utils.Mode.ARCHIVES_BY_TEAM_EVENTS, '', params, totalItems)
+        utils.addDir(teamName, utils.Mode.ARCHIVES_BY_TEAM_EVENTS, '', params, totalItems, showfanart)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
@@ -211,7 +216,7 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
             awayScore = event.awayScore if event.awayScore != None else ''
             homeScore = event.homeScore if event.homeScore != None else ''
             score = ''
-            if awayScore != '' and not (awayScore == '0' and homeScore == '0'):
+            if showscores and awayScore != '' and not (awayScore == '0' and homeScore == '0'):
                 score = ' - ' + awayScore + '-' + homeScore
             # Build period
             period = event.period if event.period != None else ''
@@ -243,60 +248,60 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
             if rtmp and resolution != 'SD Only' and streams['truelive.hd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [TrueLive HD]'
-                utils.addLink(prefix + title + suffix, streams['truelive.hd'], '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['truelive.hd'], '', totalItems, showfanart)
                 noStream = False
             if rtmp and resolution != 'HD Only' and streams['truelive.sd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [TrueLive SD]'
-                utils.addLink(prefix + title + suffix, streams['truelive.sd'], '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['truelive.sd'], '', totalItems, showfanart)
                 noStream = False
 
             if wmv and streams['wmv'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [WMV]'
-                utils.addLink(prefix + title + suffix, streams['wmv'], '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['wmv'], '', totalItems, showfanart)
                 noStream = False
             if flash and streams['flash'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [Flash]'
-                utils.addLink(prefix + title + suffix, streams['flash'].replace('f4m', 'm3u8'), '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
                 noStream = False
 
             noHdOrSd = True # Flag to indicate if we have hd or sd streams
             if istream and resolution != 'SD Only' and streams['istream.hd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [iStream HD]'
-                utils.addLink(prefix + title + suffix, streams['istream.hd'], '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['istream.hd'], '', totalItems, showfanart)
                 noHdOrSd = False
                 noStream = False
             if istream and resolution != 'HD Only' and streams['istream.sd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [iStream SD]'
-                utils.addLink(prefix + title + suffix, streams['istream.sd'].replace('f4m', 'm3u8'), '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
                 noHdOrSd = False
                 noStream = False
             
             # if streams['nondvrhd'] != None:
                 # prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 # suffix = ' [DVR HD]'
-                # utils.addLink(prefix + title + suffix, streams['nondvrhd'], '', totalItems)
+                # utils.addLink(prefix + title + suffix, streams['nondvrhd'], '', totalItems, showfanart)
                 # noStream = False
             # if streams['nondvrsd'] != None:
                 # prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 # suffix = ' [DVR SD]'
-                # utils.addLink(prefix + title + suffix, streams['nondvrsd'], '', totalItems)
+                # utils.addLink(prefix + title + suffix, streams['nondvrsd'], '', totalItems, showfanart)
                 # noStream = False
 
             # Only add normal istream if we dont have SD or HD channels
             if istream and noHdOrSd and streams['istream'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [iStream]'
-                utils.addLink(prefix + title + suffix, streams['istream'], '', totalItems)
+                utils.addLink(prefix + title + suffix, streams['istream'], '', totalItems, showfanart)
                 noStream = False
 
             # Only add no stream message if we havent added any of the above
             if noStream:
-                utils.addDir('[' + addon.getLocalizedString(100009) + '] ' + title, mode, '', params, totalItems)
+                utils.addDir('[' + addon.getLocalizedString(100009) + '] ' + title, mode, '', params, totalItems, showfanart)
 
         # Add future stream items
         if streams == None:
@@ -304,8 +309,8 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
             time = event.time if event.time != None else ''
             awayTeam = event.awayTeam
             homeTeam = event.homeTeam
-            awayScore = event.awayScore
-            homeScore = event.homeScore
+            awayScore = event.awayScore if event.awayScore != None else ''
+            homeScore = event.homeScore if event.homeScore != None else ''
             if shortNames:
                 awayTeam = ballstreams.shortTeamName(event.awayTeam, addonPath)
                 homeTeam = ballstreams.shortTeamName(event.homeTeam, addonPath)
@@ -321,12 +326,19 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
             if event.period == None or str(event.period) == '':
                 prefix = '[' + addon.getLocalizedString(100029) + '] ' if event.isOnDemand != True else ''
             else:
-                if not(awayScore == '0' and homeScore == '0'):
+                if showscores and not(awayScore == '0' and homeScore == '0'):
                     title = title + ' - ' + awayScore + '-' + homeScore
                 prefix = '[' + addon.getLocalizedString(100030) + '] ' if event.isOnDemand != True else ''
 
             suffix = ''
-            utils.addDir(prefix + title + suffix, mode, '', None, totalItems)
+            # utils.addDir(prefix + title + suffix, mode, '', None, totalItems)
+            # Create datetime for string formatting
+            params = {
+                'year': str(now.year),
+                'month': str(now.month),
+                'day': str(now.day)
+            }
+            utils.addDir(prefix + title + suffix, utils.Mode.ARCHIVES_BY_DATE_DAY, '', params, totalItems, showfanart)
             noStream = False
 
     # Check if we want a refresh button (only used for live)
@@ -334,7 +346,13 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
         refreshParams = {
             'refresh': 'True'
         }
-        utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems)
+        utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    # Set view as Big List
+    try:
+        xbmc.executebuiltin('Container.SetViewMode(51)')
+    except Exception as e:
+        print 'Warning:  Unable to set view as Big List:  ' + str(e)
 
 # Method to draw the live screen
 # which scrapes the external source and presents
@@ -372,7 +390,11 @@ location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
 resolution = addon.getSetting('resolution')
-    
+showscores = addon.getSetting('showscores')
+showscores = showscores != None and showscores.lower() == 'true'
+showfanart = addon.getSetting('showfanart')
+showfanart = showfanart != None and showfanart.lower() == 'true'
+
 # Load the parameters
 params = utils.getParams()
 
