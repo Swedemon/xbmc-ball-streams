@@ -2,23 +2,23 @@ import xbmcgui, xbmcplugin
 import urllib
 import sys
 
-# xbmc-ball-streams
+# xbmc-ball-streams2
 # author: craig mcnicholas
 # contact: craig@designdotworks.co.uk
 
 # Represents an enumeration for application modes
 class Mode:
     HOME = 1
-    ARCHIVES = 2
-    ARCHIVES_BY_DATE = 3
-    ARCHIVES_BY_DATE_YEAR = 4
-    ARCHIVES_BY_DATE_MONTH = 5
-    ARCHIVES_BY_DATE_DAY = 6
-    ARCHIVES_BY_TEAM = 7
-    ARCHIVES_BY_TEAM_EVENTS = 8
-	ARCHIVES_BY_EVENT_STREAMS = 9
+    ONDEMAND = 2
+    ONDEMAND_BYDATE = 3
+    ONDEMAND_BYDATE_YEARMONTH = 4
+    ONDEMAND_BYDATE_YEARMONTH_DAY = 5
+    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT = 6
+    ONDEMAND_BYTEAM = 7
+    ONDEMAND_BYTEAM_TEAM = 8
+    ONDEMAND_BYTEAM_TEAM_EVENT = 9
     LIVE = 10
-	LIVE_STREAMS = 11
+    LIVE_EVENT = 11
 
 # Method to get the parameters for the current view
 # @return an array of parameters
@@ -68,10 +68,10 @@ def parseParamString(params, key):
 # @return a flag indicating success
 def addLink(name, url, image, totalItems = None, showfanart = None):
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams/Basketball-Ball-icon.png')
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams2/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
-        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
+        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams2/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item)
     else:
@@ -91,10 +91,10 @@ def addDir(name, mode, image, params, totalItems = None, showfanart = None):
         for k, v in params.iteritems():
             url += '&' + k + '=' + urllib.quote_plus(v)
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams/Basketball-Ball-icon.png')
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/xbmc-ball-streams2/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
-        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams/fanart.jpg' )
+        item.setProperty( "Fanart_Image", 'special://home/addons/xbmc-ball-streams2/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item, isFolder = True)
     else:

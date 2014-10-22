@@ -1,6 +1,6 @@
 import urllib, urllib2, datetime, json, os
 
-# xbmc-ball-streams
+# xbmc-ball-streams2
 # author: craig mcnicholas
 # contact: craig@designdotworks.co.uk
 
@@ -37,53 +37,86 @@ class ApiException(Exception):
     def __str__(self):
         return repr(self.value)
 
-# Represents an event between two teams
-class Event():
+# Represents a live event between two teams
+class LiveEvent():
 
     # Creates a new event instance
-    # @param streamId the stream id
-    # @param event the event name (usually a league)
-    # @param homeTeam the home team name
-    # @param awayTeam the away team name
-    # @param isLive [optional] a flag indicating if the stream is live, defaults to false
-    # @param isFuture [optional] a flag indicating if the stream is in the future, defaults to false
-    # @param isOnDemand [optional] a flag indicating if the stream is on demand, defaults to false
-    # @param time [optional] the time of the event, defaults to None
-    def __init__(self, streamId, event, homeTeam, awayTeam, feedType = None, homeScore = None, awayScore = None, period = None, isLive = False, isFuture = False, isOnDemand = False, time = None):
+    def __init__(self, streamId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType):
         self.streamId = streamId
+        self.event = event
+        self.homeTeam = homeTeam
+        self.homeScore = homeScore
+        self.awayTeam = awayTeam
+        self.awayScore = awayScore
+        self.startTime = startTime
+        self.period = period
+        self.isPlaying = isPlaying
+        self.feedType = feedType
+        self.isFuture = period == None and not isPlaying
+        self.isFinal = period != None and not isPlaying
+
+    # Overrides this classes string value
+    def __str__(self):
+        return repr('Live Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.streamId)
+
+# Represents an on-demand event between two teams
+class OnDemandEvent():
+
+    # Creates a new event instance
+    def __init__(self, streamId, date, event, homeTeam, awayTeam, feedType = None):
+        self.streamId = streamId
+        self.date = date
         self.event = event
         self.homeTeam = homeTeam
         self.awayTeam = awayTeam
         self.feedType = feedType
-        self.homeScore = homeScore
-        self.awayScore = awayScore
-        self.period = period
-        self.isLive = isLive
-        self.isFuture = isFuture
-        self.isOnDemand = isOnDemand
-        self.time = time
 
     # Overrides this classes string value
     def __str__(self):
-        if self.isOnDemand:
-            return repr('On Demand Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.streamId)
-        elif self.isLive:
-            return repr('Live Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.time + ' @ ' + self.streamId)
-        else:
-            return repr('Future Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.time)
+        return repr('OnDemand Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.date + ' @ ' + self.streamId)
+
+# Represents an event stream between two teams
+class LiveStream():
+
+    # Creates a new streams instance
+    def __init__(self, streamId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, feedType, streamSet = None):
+        self.streamId = streamId
+        self.event = event
+        self.homeTeam = homeTeam
+        self.homeScore = homeScore
+        self.awayTeam = awayTeam
+        self.awayScore = awayScore
+        self.startTime = startTime
+        self.period = period
+        self.feedType = feedType
+        self.streamSet = streamSet
+
+    # Overrides this classes string value
+    def __str__(self):
+        return repr('Live Event Stream: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.streamId)
+
+# Represents an event stream between two teams
+class OnDemandStream():
+
+    # Creates a new streams instance
+    def __init__(self, streamId, event, homeTeam, awayTeam, highlights = None, condensed = None, streams = None, HDstreams = None, SDstreams = None):
+        self.streamId = streamId
+        self.event = event
+        self.homeTeam = homeTeam
+        self.awayTeam = awayTeam
+        self.highlights = highlights
+        self.condensed = condensed
+        self.streams = streams
+        self.HDstreams = HDstreams
+        self.SDstreams = SDstreams
+
+    # Overrides this classes string value
+    def __str__(self):
+        return repr('On Demand Event Stream: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.streamId)
 
 # Represents a highlight
 class Highlight():
     # Creates a new highlight instance
-    # @param streamId the stream id
-    # @param event the event name (usually a league)
-    # @param homeTeam the home team name
-    # @param awayTeam the away team name
-    # @param lowQualitySrc source url
-    # @param medQualitySrc source url
-    # @param highQualitySrc source url
-    # @param homeSrc home source url
-    # @param awaySrc away source url
     def __init__(self, streamId, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc):
         self.streamId = streamId
         self.event = event
@@ -117,7 +150,7 @@ class Team():
 def login(username, password):
     # The applications api key, generated @ https://www4.ballstreams.com/api
     API_KEY = 'd4b03595a0691edbf89347a132fb5d28'
-    
+
     # Setup login request data
     data = urllib.urlencode({
         'username': username,
@@ -128,7 +161,7 @@ def login(username, password):
     # Get login response
     request = __setupRequest('https://api.ballstreams.com/Login')
     response = None
-    
+
     try:
         response = urllib2.urlopen(request, data)
     except urllib2.HTTPError as e:
@@ -200,7 +233,7 @@ def ipException(session):
     data = urllib.urlencode({
         'token': session.token
     })
-    
+
     # Get response for ip exception
     request = __setupRequest('https://api.ballstreams.com/IPException')
     response = urllib2.urlopen(request, data)
@@ -223,7 +256,7 @@ def availableDates(session):
     data = urllib.urlencode({
         'token': session.token
     })
-    
+
     # Get response for available dates
     request = __setupRequest('https://api.ballstreams.com/GetOnDemandDates?' + data)
     response = urllib2.urlopen(request)
@@ -232,13 +265,13 @@ def availableDates(session):
 
     # Parse the on demand dates response
     js = json.loads(page)
-    
+
     # Check the api request was successful
     __checkStatus(js)
 
     # Get the dates array
     dates = js['dates']
-    
+
     # Check dates
     if dates == None:
         raise ApiException('API Error: The dates were null');
@@ -264,7 +297,7 @@ def teams(session):
     data = urllib.urlencode({
         'token': session.token
     })
-    
+
     # Get response for teams
     request = __setupRequest('https://api.ballstreams.com/ListTeams?' + data)
     response = urllib2.urlopen(request)
@@ -298,7 +331,7 @@ def teams(session):
         # Check team league
         if league == None:
             raise ApiException('API Error: The league was null');
-        
+
         results.append(Team(teamName, league))
 
     return results
@@ -318,9 +351,10 @@ def eventsForDate(session, date):
         'token': session.token,
         'date': month + '/' + day + '/' + year
     })
-    
+
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
-    return __parseEvents(url)
+    
+    return __parseOnDemandEvents(url)
 
 # Method to get the highlights for a given date
 # @param session the session details to login with
@@ -331,13 +365,13 @@ def highlightsForDate(session, date):
     year = str(date.year)
     month = '%02d' % (date.month,)
     day = '%02d' % (date.day,)
-    
+
     # Setup events for date data
     data = urllib.urlencode({
         'token': session.token,
         'date': month + '/' + day + '/' + year
     })
-    
+
     url = 'https://api.ballstreams.com/GetHighlights?' + data
     print 'highlights: ' + url
 
@@ -366,12 +400,13 @@ def eventsForTeam(session, team):
     })
 
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
-    return __parseEvents(url)
+    
+    return __parseOnDemandEvents(url)
 
 # Method to parse an on demand events request
 # @param url the url to get the json response from and parse
 # @return a list of events
-def __parseEvents(url):
+def __parseOnDemandEvents(url):
     # Get response for events
     request = __setupRequest(url)
     response = urllib2.urlopen(request)
@@ -380,11 +415,8 @@ def __parseEvents(url):
 
     # Parse the events response
     js = json.loads(page)
-    
-    # Check the api request was successful
-    # TODO Change this once Billy has fixed the response,
-    # it currently does not set the status flag properly
-    # __checkStatus(js)
+
+    __checkStatus(js)
 
     # Get the ondemand array
     onDemand = js['ondemand']
@@ -397,6 +429,7 @@ def __parseEvents(url):
     for item in onDemand:
         # Get the on demand variables
         streamId = item['id']
+        date = item['date']
         event = item['event']
         homeTeam = item['homeTeam']
         awayTeam = item['awayTeam']
@@ -405,7 +438,7 @@ def __parseEvents(url):
         # Check on demand item id
         if streamId == None:
             raise ApiException('API Error: The id was null');
-        
+
         # Check on demand item event
         if event == None:
             raise ApiException('API Error: The event was null');
@@ -413,12 +446,12 @@ def __parseEvents(url):
         # Check on demand item home team
         if homeTeam == None:
             raise ApiException('API Error: The home team was null');
-        
+
         # Check on demand item away team
         if awayTeam == None:
             raise ApiException('API Error: The away team was null');
-        
-        events.append(Event(streamId, event, homeTeam, awayTeam, feedType, homeScore = None, awayScore = None, period = None, isOnDemand = True))
+
+        events.append(OnDemandEvent(streamId, date, event, homeTeam, awayTeam, feedType))
 
     return events
 
@@ -428,31 +461,19 @@ def __parseEvents(url):
 # @param location the optional location to return the stream from
 # @return a map of urls with keys wmv, istream, flash, istream.hd,
 # istream.sd, truelive.sd, truelive.hd or None if not found
-def eventStream(session, event, location=None):
-    # Check event is live or archived
-    if event.isFuture:
-        return None
-
-    # Setup a url source
-    url = None
-
+def eventLiveStream(session, streamId, location=None):
     # Setup stream data
     data = {
         'token': session.token,
-        'id': event.streamId
+        'id': streamId
     }
     # Only add location if necessary
     if location != None:
         data['location'] = location
     data = urllib.urlencode(data)
 
-    # Create url based on event type
-    if event.isOnDemand:
-        url = 'https://api.ballstreams.com/GetOnDemandStream?' + data
-    elif event.isLive:
-        url = 'https://api.ballstreams.com/GetLiveStream?' + data
-    else:
-        raise ApiException('API Error: Event was in an invalid state, cannot find stream url');
+    # Create url
+    url = 'https://api.ballstreams.com/GetLiveStream?' + data
 
     # Get response for events for date
     request = __setupRequest(url)
@@ -466,13 +487,24 @@ def eventStream(session, event, location=None):
     # Check the api request was successful
     __checkStatus(js)
 
+    # Get the on demand variables
+    streamId = js['id']
+    event = js['event']
+    homeTeam = js['homeTeam']
+    homeScore = js['homeScore']
+    awayTeam = js['awayTeam']
+    awayScore = js['awayScore']
+    startTime = js['startTime']
+    period = js['period']
+    feedType = js['feedType']
+    
     # Get the streams
     streams = None
     hdStreams = None
     sdStreams = None
-    # nondvr = None
-    # nondvrsd = None
-    # nondvrhd = None
+    nondvr = None
+    nondvrsd = None
+    nondvrhd = None
     sdTrueLive = None
     hdTrueLive = None
     if 'streams' in js:
@@ -487,18 +519,18 @@ def eventStream(session, event, location=None):
         sdStreams = js['SDstreams']
     else:
         sdStreams = []
-    # if 'nonDVR' in js:
-        # nondvr = js['nonDVR']
-    # else:
-        # nondvr = []
-    # if 'nonDVRSD' in js:
-        # nondvrsd = js['nonDVRSD']
-    # else:
-        # nondvrsd = []
-    # if 'nonDVRHD' in js:
-        # nondvrhd = js['nonDVRHD']
-    # else:
-        # nondvrhd = []
+    if 'nonDVR' in js:
+        nondvr = js['nonDVR']
+    else:
+        nondvr = []
+    if 'nonDVRSD' in js:
+        nondvrsd = js['nonDVRSD']
+    else:
+        nondvrsd = []
+    if 'nonDVRHD' in js:
+        nondvrhd = js['nonDVRHD']
+    else:
+        nondvrhd = []
     if 'TrueLiveSD' in js:
         sdTrueLive = js['TrueLiveSD']
     else:
@@ -515,12 +547,12 @@ def eventStream(session, event, location=None):
         raise ApiException('API Error: The HDstreams was null');
     if sdStreams == None:
         raise ApiException('API Error: The SDstreams was null');
-    # if nondvr == None:
-        # raise ApiException('API Error: The nonDVR was null');
-    # if nondvrsd == None:
-        # raise ApiException('API Error: The nonDVRSD was null');
-    # if nondvrhd == None:
-        # raise ApiException('API Error: The nonDVRHD was null');
+    if nondvr == None:
+        raise ApiException('API Error: The nonDVR was null');
+    if nondvrsd == None:
+        raise ApiException('API Error: The nonDVRSD was null');
+    if nondvrhd == None:
+        raise ApiException('API Error: The nonDVRHD was null');
     if sdTrueLive == None:
         raise ApiException('API Error: The TrueLiveSD was null');
     if hdTrueLive == None:
@@ -533,9 +565,9 @@ def eventStream(session, event, location=None):
         'istream': None,
         'istream.hd': None,
         'istream.sd': None,
-        # 'nondvr': None,
-        # 'nondvrsd': None,
-        # 'nondvrhd': None,
+        'nondvr': None,
+        'nondvrsd': None,
+        'nondvrhd': None,
         'flash': None,
         'truelive.hd': None,
         'truelive.sd': None
@@ -545,7 +577,7 @@ def eventStream(session, event, location=None):
     for stream in streams:
         # Get the type
         streamType = stream['type']
-        
+
         # Check type
         if streamType == None:
             raise ApiException('API Error: The type was null');
@@ -577,7 +609,7 @@ def eventStream(session, event, location=None):
     for stream in hdStreams:
         # Get the type
         streamType = stream['type']
-        
+
         # Check type
         if streamType == None:
             raise ApiException('API Error: The type was null');
@@ -595,7 +627,7 @@ def eventStream(session, event, location=None):
     for stream in sdStreams:
         # Get the type
         streamType = stream['type']
-        
+
         # Check type
         if streamType == None:
             raise ApiException('API Error: The type was null');
@@ -610,64 +642,64 @@ def eventStream(session, event, location=None):
                 found = True
 
     # Find the nondvr streams
-    # for stream in nondvr:
+    for stream in nondvr:
         # Get the type
-        # streamType = stream['type']
-        
+        streamType = stream['type']
+
         # Check type
-        # if streamType == None:
-            # raise ApiException('API Error: The type was null');
+        if streamType == None:
+            raise ApiException('API Error: The type was null');
 
         # Check if the type is nondvr
-        # if streamType.lower() == 'istream':
-            # iStreamSource = stream['src']
+        if streamType.lower() == 'istream':
+            iStreamSource = stream['src']
 
             # Only set it if the source url is valid
-            # if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
-                # result['nondvr'] = iStreamSource
-                # found = True
+            if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
+                result['nondvr'] = iStreamSource
+                found = True
 
     # Find the nondvrsd streams
-    # for stream in nondvrsd:
+    for stream in nondvrsd:
         # Get the type
-        # streamType = stream['type']
-        
+        streamType = stream['type']
+
         # Check type
-        # if streamType == None:
-            # raise ApiException('API Error: The type was null');
+        if streamType == None:
+            raise ApiException('API Error: The type was null');
 
         # Check if the type is nondvrsd
-        # if streamType.lower() == 'istream':
-            # iStreamSource = stream['src']
+        if streamType.lower() == 'istream':
+            iStreamSource = stream['src']
 
             # Only set it if the source url is valid
-            # if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
-                # result['nondvrsd'] = iStreamSource
-                # found = True
+            if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
+                result['nondvrsd'] = iStreamSource
+                found = True
 
     # Find the nondvrhd streams
-    # for stream in nondvrhd:
+    for stream in nondvrhd:
         # Get the type
-        # streamType = stream['type']
+        streamType = stream['type']
 
         # Check type
-        # if streamType == None:
-            # raise ApiException('API Error: The type was null');
+        if streamType == None:
+            raise ApiException('API Error: The type was null');
 
         # Check if the type is nondvrhd
-        # if streamType.lower() == 'istream':
-            # iStreamSource = stream['src']
+        if streamType.lower() == 'istream':
+            iStreamSource = stream['src']
 
             # Only set it if the source url is valid
-            # if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
-                # result['nondvrhd'] = iStreamSource
-                # found = True
+            if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
+                result['nondvrhd'] = iStreamSource
+                found = True
 
     # Find the SD true live streams
     for stream in sdTrueLive:
         # Get the type
         streamType = stream['type']
-        
+
         # Check type
         if streamType == None:
             raise ApiException('API Error: The type was null');
@@ -685,7 +717,7 @@ def eventStream(session, event, location=None):
     for stream in hdTrueLive:
         # Get the type
         streamType = stream['type']
-        
+
         # Check type
         if streamType == None:
             raise ApiException('API Error: The type was null');
@@ -701,9 +733,9 @@ def eventStream(session, event, location=None):
 
     # If nothing found then return None
     if found == False:
-        return None
-    else:
-        return result
+        result = None
+
+    return LiveStream(streamId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, feedType, result)
 
 # Method to get a list of events that are live or in the future
 # @param session the session details to login with
@@ -713,7 +745,7 @@ def liveEvents(session):
     data = urllib.urlencode({
         'token': session.token
     })
-    
+
     # Get response for events
     request = __setupRequest('https://api.ballstreams.com/GetLive?' + data)
     response = urllib2.urlopen(request)
@@ -726,7 +758,7 @@ def liveEvents(session):
 
     # Parse the events response
     js = json.loads(page)
-    
+
     # Check the api request was successful
     __checkStatus(js)
 
@@ -736,25 +768,25 @@ def liveEvents(session):
     # Check schedule
     if schedule == None:
         raise ApiException('API Error: The schedule was null');
-    
+
     events = []
     for item in schedule:
         # Get the schedule variables
         streamId = item['id']
         event = item['event']
         homeTeam = item['homeTeam']
-        awayTeam = item['awayTeam']
         homeScore = item['homeScore']
+        awayTeam = item['awayTeam']
         awayScore = item['awayScore']
-        feedType = item['feedType']
-        period = item['period']
         startTime = item['startTime']
+        period = item['period']
         isPlaying = item['isPlaying']
+        feedType = item['feedType']
 
         # Check schedule item id
         if streamId == None:
             raise ApiException('API Error: The id was null');
-        
+
         # Check schedule item event
         if event == None:
             raise ApiException('API Error: The event was null');
@@ -762,15 +794,15 @@ def liveEvents(session):
         # Check schedule item home team
         if homeTeam == None:
             raise ApiException('API Error: The home team was null');
-        
+
         # Check schedule item away team
         if awayTeam == None:
             raise ApiException('API Error: The away team was null');
-        
+
         # Check schedule item start time
         if startTime == None:
             raise ApiException('API Error: The start time was null');
-        
+
         # Check schedule item is playing
         if isPlaying == None:
             raise ApiException('API Error: The is playing was null');
@@ -778,8 +810,8 @@ def liveEvents(session):
             raise ApiException('API Error: The is playing value was in an incorrect format');
         # Convert the value to a boolean
         isPlaying = str(isPlaying) == '1'
-        
-        events.append(Event(streamId, event, homeTeam, awayTeam, feedType, homeScore, awayScore, period, isFuture = isPlaying == False, isLive = isPlaying, time = startTime))
+
+        events.append(LiveEvent(streamId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType))
 
     return events
 

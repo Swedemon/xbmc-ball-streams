@@ -2,37 +2,36 @@ import xbmc, xbmcplugin, xbmcaddon, xbmcgui
 import ballstreams, utils
 import os, datetime, threading, random, time
 
-# xbmc-ball-streams
+# xbmc-ball-streams2
 # author: craig mcnicholas
 # contact: craig@designdotworks.co.uk
 
 # deals with a bug where errors are thrown 
 # if data directory does not exist.
-addonId = 'plugin.video.xbmc-ball-streams'
+addonId = 'plugin.video.xbmc-ball-streams2'
 dataPath = 'special://profile/addon_data/' + addonId
 if not os.path.exists: os.makedirs(dataPath)
 addon = xbmcaddon.Addon(id = addonId)
 addonPath = addon.getAddonInfo('path')
-now = datetime.datetime.now()
+now = datetime.datetime.utcnow()
 
 # Method to draw the home screen
 def HOME():
     print 'HOME()'
-    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ARCHIVES, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, showfanart)
     utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, showfanart)
 
 # Method to draw the archives screen
-def ARCHIVES():
-    print 'ARCHIVES()'
-    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ARCHIVES_BY_DATE, '', None, showfanart)
-    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ARCHIVES_BY_TEAM, '', None, showfanart)
+def ONDEMAND():
+    print 'ONDEMAND()'
+    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, showfanart)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
 # a list of months/years for archives
-# @param session the user session to make api calls with
-def ARCHIVES_BY_DATE(session):
-    print 'ARCHIVES_BY_DATE(session)'
+def ONDEMAND_BYDATE(session):
+    print 'ONDEMAND_BYDATE(session)'
 
     # Retrieve the available dates
     dates = ballstreams.availableDates(session)
@@ -58,16 +57,13 @@ def ARCHIVES_BY_DATE(session):
             'year': str(year),
             'month': str(month)
         }
-        utils.addDir(date.strftime('%B %Y'), utils.Mode.ARCHIVES_BY_DATE_MONTH, '', params, totalItems, showfanart)
+        utils.addDir(date.strftime('%B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH, '', params, totalItems, showfanart)
 
-# Method to draw the archives by date screen
+# Method to draw the on-demand by date screen
 # which scrapes the external source and presents
 # a list of days for a given year and month of archives
-# @param session the user session to make api calls with
-# @param year the year to obtain valid months for
-# @param month the month to obtain valid days for
-def ARCHIVES_BY_DATE_MONTH(session, year, month):
-    print 'ARCHIVES_BY_DATE_MONTH(session, year, month)'
+def ONDEMAND_BYDATE_YEARMONTH(session, year, month):
+    print 'ONDEMAND_BYDATE_YEARMONTH(session, year, month)'
     print 'Year: ' + str(year)
     print 'Month: ' + str(month)
 
@@ -92,23 +88,13 @@ def ARCHIVES_BY_DATE_MONTH(session, year, month):
             'month': str(month),
             'day': str(day)
         }
-        utils.addDir(date.strftime('%A %d %B %Y'), utils.Mode.ARCHIVES_BY_DATE_DAY, '', params, totalItems, showfanart)
+        utils.addDir(date.strftime('%A %d %B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
-# a list of archived games for a given day
-# @param session the user session to make api calls with
-# @param year the year to obtain valid months for
-# @param month the month to obtain valid days for
-# @param day the day to obtain valid games for
-# @param istream whether to enable istreams
-# @param flash whether to enable flash
-# @param rtmp whether to enable rtmp
-# @param wmv whether to enable wmv
-# @param shortNames whether to show short team names
-# @param location the location to use for streams
-def ARCHIVES_BY_DATE_DAY(session, year, month, day, istream, flash, rtmp, wmv, shortNames, location):
-    print 'ARCHIVES_BY_DATE_DAY(session, year, month, day)'
+# a list of on-demand events for a given day
+def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
+    print 'ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)'
     print 'Year: ' + str(year)
     print 'Month: ' + str(month)
     print 'Day: ' + str(day)
@@ -117,24 +103,52 @@ def ARCHIVES_BY_DATE_DAY(session, year, month, day, istream, flash, rtmp, wmv, s
     date = datetime.date(year, month, day)
     try:
         events = ballstreams.eventsForDate(session, date)
-    except Exception as e:
-        print 'Warning no events for date: ' + str(date) + ' exception raised: ' + str(e)
-        return None
+    except:
+        return
+        
+    totalItems = len(events)
 
-    params = {
-        'year': str(year),
-        'month': str(month),
-        'day': str(day)
-    }
-    __listEvents(session, events, utils.Mode.ARCHIVES_BY_DATE_DAY, params, istream = istream, flash = flash, rtmp = rtmp, wmv = wmv, shortNames = shortNames, location = location)
+    for event in events:
+        # Create datetime for string formatting
+        parts = event.date.split('/')
+        day = int(parts[1])
+        month = int(parts[0])
+        year = int(parts[2])
+        datestr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
+        homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
+        awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
+        title = ''
+        if event.feedType == 'Home Feed':
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + '*' + datestr
+        elif event.feedType == 'Away Feed':
+            title = event.event + ': ' + awayTeam + '* @ ' + homeTeam + datestr
+        else:
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
+        params = {
+            'streamId': event.streamId
+        }
+        utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT, '', params, totalItems, showfanart)
+
+    # Set view as Big List
+    try:
+        xbmc.executebuiltin('Container.SetViewMode(51)')
+    except Exception as e:
+        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+
+# Method to draw the archives by date screen
+# which scrapes the external source and presents
+# a list of on-demand streams for a given event
+def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, streamId):
+    print 'ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, streamId)'
+    print 'StreamId: ' + streamId
+    # TODO.
+    pass
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
 # a list of team names (or potentially events)
-# @param session the user session to make api calls with
-# @param shortNames whether to show short team names
-def ARCHIVES_BY_TEAM(session, shortNames):
-    print 'ARCHIVES_BY_TEAM(session)'
+def ONDEMAND_BYTEAM(session):
+    print 'ONDEMAND_BYTEAM(session)'
 
     # Retrieve the teams
     teams = ballstreams.teams(session)
@@ -147,89 +161,210 @@ def ARCHIVES_BY_TEAM(session, shortNames):
         params = {
             'team': team.name
         }
-        teamName = team.league + ': ' + team.name
-        # if shortNames:
-            # teamName = ballstreams.shortTeamName(team.name, addonPath)
-        utils.addDir(teamName, utils.Mode.ARCHIVES_BY_TEAM_EVENTS, '', params, totalItems, showfanart)
+        title = team.league + ': ' + team.name if team.league != '' else team.name
+        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM, '', params, totalItems, showfanart)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
 # a list of events for a given team
-# @param session the user session to make api calls with
-# @param team the team to find the events for
-# @param istream whether to enable istreams
-# @param flash whether to enable flash
-# @param rtmp whether to enable rtmp
-# @param wmv whether to enable wmv
-# @param shortNames whether to show short team names
-# @param location the location to use for streams
-def ARCHIVES_BY_TEAM_EVENTS(session, team, istream, flash, rtmp, wmv, shortNames, location):
-    print 'ARCHIVES_BY_TEAM_EVENTS(session, team)'
+def ONDEMAND_BYTEAM_TEAM(session, team):
+    print 'ONDEMAND_BYTEAM_TEAM(session, team)'
     print 'Team: ' + team
 
     # Retrieve the team events
     events = ballstreams.eventsForTeam(session, ballstreams.Team(team))
 
-	# Count total number of team events for ui
-    totalItems = len(teams)
-	
-    # params = {
-        # 'team': team
-    # }
-    # __listEvents(session, events, utils.Mode.ARCHIVES_BY_TEAM_EVENTS, params, istream = istream, flash = flash, rtmp = rtmp, wmv = wmv, shortNames = shortNames, location = location)
-	
-	for event in events:
-		streamId = event.id
-		# TODO: build event directories
-		# build title
-		# utils.addDir(streamId, utils.Mode.ARCHIVES_BY_EVENT_STREAMS, '', params, totalItems, showfanart)
+    totalItems = len(events)
+
+    for event in events:
+        # Create datetime for string formatting
+        parts = event.date.split('/')
+        day = int(parts[1])
+        month = int(parts[0])
+        year = int(parts[2])
+        datestr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
+        homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
+        awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
+        title = ''
+        if event.feedType == 'Home Feed':
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + '*' + datestr
+        elif event.feedType == 'Away Feed':
+            title = event.event + ': ' + awayTeam + '* @ ' + homeTeam + datestr
+        else:
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
+        params = {
+            'streamId': event.streamId
+        }
+        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT, '', params, totalItems, showfanart)
+
+    # Set view as Big List
+    try:
+        xbmc.executebuiltin('Container.SetViewMode(51)')
+    except Exception as e:
+        print 'Warning:  Unable to set view as Big List:  ' + str(e)
 
 # Method to draw the archive streams by event screen
 # which scrapes the external source and presents
 # a list of streams for a given stream id
-def ARCHIVES_BY_EVENT_STREAMS(session, streamId, istream, flash, rtmp, wmv, shortNames, location):
-    print 'ARCHIVES_BY_TEAM_EVENTS(session, streamId)'
+def ONDEMAND_BYTEAM_TEAM_EVENT(session, streamId):
+    print 'ONDEMAND_BYTEAM_TEAM_EVENT(session, streamId)'
     print 'StreamId: ' + streamId
 
 # Method to draw the live screen
 # which scrapes the external source and presents
 # a list of current day events
-# @param session the user session to make api calls with
-# @param istream whether to enable istreams
-# @param flash whether to enable flash
-# @param rtmp whether to enable rtmp
-# @param wmv whether to enable wmv
-# @param shortNames whether to show short team names
-# @param location the location to get streams for or None
-def LIVE(session, istream, flash, rtmp, wmv, shortNames, location):
+def LIVE(session):
     print 'LIVE(session)'
 
     # Find live events
     events = ballstreams.liveEvents(session)
 
-    params = {}
-    __listEvents(session, events, utils.Mode.LIVE, params, addRefresh = True, istream = istream, flash = flash, rtmp = rtmp, wmv = wmv, shortNames = shortNames, location = location)
+    totalItems = len(events) + 1
+
+    for event in events:
+        # Build prefix
+        prefix = '[LIVE] '
+        if event.isFuture:
+            prefix = '[Coming Soon] '
+        elif event.isFinal:
+            prefix = '[Final] '
+        # Build matchup
+        homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
+        awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
+        matchupStr = awayTeam + ' @ ' + homeTeam
+        if event.feedType == 'Home Feed':
+            matchupStr = matchupStr + '*'
+        elif event.feedType == 'Away Feed':
+            matchupStr = awayTeam + '* @ ' + homeTeam
+        # Build period
+        periodStr = ''
+        if event.period == 'HALF - ':
+            periodStr = ' - HALF'
+        else:
+            periodStr = ' - ' + event.period if event.period != None else ''
+        # Build score
+        homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
+        awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
+        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture else ''
+        # Build title
+        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr
+        if event.isFinal:
+            now = getAdjustedDateTime()
+            params = {
+                'year': str(now.year),
+                'month': str(now.month),
+                'day': str(now.day)
+            }
+            utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
+        elif event.isFuture:
+            utils.addDir(title, mode, '', refreshParams, totalItems, showfanart)
+        else:
+            params = {
+                'streamId': event.streamId
+            }
+            utils.addDir(title, utils.Mode.LIVE_EVENT, '', params, totalItems, showfanart)
+
+    # Add refresh button
+    refreshParams = {
+        'refresh': 'True'
+    }
+    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    # Set view as Big List
+    try:
+        xbmc.executebuiltin('Container.SetViewMode(51)')
+    except Exception as e:
+        print 'Warning:  Unable to set view as Big List:  ' + str(e)
 
 # Method to draw the live streams screen
 # which scrapes the external source and presents
 # a list of current day event streams for a stream id
-def LIVE_STREAMS(session, streamId, istream, flash, rtmp, wmv, shortNames, location):
-    print 'LIVE_STREAMS(session, streamId)'
+def LIVE_EVENT(session, streamId):
+    print 'LIVE_EVENT(session, streamId)'
     print 'StreamId: ' + streamId
 
+    # Build streams
+    liveStream = ballstreams.eventLiveStream(session, streamId, location)
+    
+    totalItems = 11 # max possible
+
+    if liveStream == None or liveStream.streamSet == None:
+        return None
+
+    # Build prefix
+    prefix = '[LIVE] '
+    # Build matchup
+    homeTeam = liveStream.homeTeam if not shortNames else ballstreams.shortTeamName(liveStream.homeTeam, addonPath)
+    awayTeam = liveStream.awayTeam if not shortNames else ballstreams.shortTeamName(liveStream.awayTeam, addonPath)
+    matchupStr = awayTeam + ' @ ' + homeTeam
+    if liveStream.feedType == 'Home Feed':
+        matchupStr = matchupStr + '*'
+    elif liveStream.feedType == 'Away Feed':
+        matchupStr = awayTeam + '* @ ' + homeTeam
+    # Build period
+    periodStr = ''
+    if liveStream.period == 'HALF - ':
+        periodStr = ' - HALF'
+    else:
+        periodStr = ' - ' + liveStream.period if liveStream.period != None else ''
+    # Build score
+    homeScore = liveStream.homeScore if liveStream.homeScore != None and len(liveStream.homeScore)>0 else '0'
+    awayScore = liveStream.awayScore if liveStream.awayScore != None and len(liveStream.awayScore)>0 else '0'
+    scoreStr = ' - ' + awayScore + '-' + homeScore if showscores else ''
+    # Build title
+    title = prefix + liveStream.event + ': ' + matchupStr + scoreStr + periodStr
+    
+    if truelive and resolution != 'SD Only' and liveStream.streamSet['truelive.hd'] != None:
+        suffix = ' [TrueLive HD]'
+        utils.addLink(title + suffix, liveStream.streamSet['truelive.hd'], '', totalItems, showfanart)
+    if truelive and resolution != 'HD Only' and liveStream.streamSet['truelive.sd'] != None:
+        suffix = ' [TrueLive SD]'
+        utils.addLink(title + suffix, liveStream.streamSet['truelive.sd'], '', totalItems, showfanart)
+    if flash and resolution != 'SD Only' and liveStream.streamSet['flash'] != None:
+        suffix = ' [Flash]'
+        utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+    if istream and resolution != 'SD Only' and liveStream.streamSet['istream.hd'] != None:
+        suffix = ' [iStream HD]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream.hd'], '', totalItems, showfanart)
+    if istream and resolution != 'HD Only' and liveStream.streamSet['istream.sd'] != None:
+        suffix = ' [iStream SD]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+    if istream and resolution == 'All' and liveStream.streamSet['istream'] != None:
+        suffix = ' [iStream]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream'], '', totalItems, showfanart)
+    if dvr and resolution != 'SD Only' and liveStream.streamSet['nondvrhd'] != None:
+        suffix = ' [DVR HD]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvrhd'], '', totalItems, showfanart)
+    if dvr and resolution != 'HD Only' and liveStream.streamSet['nondvrsd'] != None:
+        suffix = ' [DVR SD]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvrsd'], '', totalItems, showfanart)
+    if dvr and resolution == 'All' and liveStream.streamSet['nondvr'] != None:
+        suffix = ' [DVR]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvr'], '', totalItems, showfanart)
+    if wmv and resolution == 'All' and liveStream.streamSet['wmv'] != None:
+        suffix = ' [WMV]'
+        utils.addLink(title + suffix, liveStream.streamSet['wmv'], '', totalItems, showfanart)
+
+    # Add refresh button
+    refreshParams = {
+        'refresh': 'True',
+        'streamId': streamId
+    }
+    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    # Set view as Big List
+    try:
+        xbmc.executebuiltin('Container.SetViewMode(51)')
+    except Exception as e:
+        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+
+# Compute the date utilized to determine current day live 
+# once a game is final.
+def getAdjustedDateTime():
+    return datetime.datetime.utcnow() + datetime.timedelta(hours=-8)
+
 # Method to list a series of event streams
-# @param session the session instance to login with
-# @param events the list of events to display
-# @param mode the mode to return to if stream is invalid
-# @param params the params to pass if stream is invalid
-# @param addRefresh whether to add a refresh link to the end
-# @param istream whether to enable istreams
-# @param flash whether to enable flash streams
-# @param rtmp whether to enable rtmp streams
-# @param wmv whether to enable wmv streams
-# @param shortNames whether to show short team names
-# @param location the location to get streams for or None
-def __listEvents(session, events, mode, params, addRefresh = False, istream = False, flash = False, rtmp = False, wmv = False, shortNames = True, location = None):
+def __listEvents(session, events, mode, params, addRefresh = False):
     # Count total number of items for ui, this could potentially be
     # less if the url is invalid
     totalItems = len(events)
@@ -244,7 +379,7 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
     # Add directories for events
     for event in events:
         streams = ballstreams.eventStream(session, event, location)
-        
+
         # Make sure the streams are valid
         if streams != None:
             # Prepare title variables
@@ -287,12 +422,12 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
 
             # Add the streams that are enabled
             noStream = True
-            if rtmp and resolution != 'SD Only' and streams['truelive.hd'] != None:
+            if truelive and resolution != 'SD Only' and streams['truelive.hd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [TrueLive HD]'
                 utils.addLink(prefix + title + suffix, streams['truelive.hd'], '', totalItems, showfanart)
                 noStream = False
-            if rtmp and resolution != 'HD Only' and streams['truelive.sd'] != None:
+            if truelive and resolution != 'HD Only' and streams['truelive.sd'] != None:
                 prefix = '[' + addon.getLocalizedString(100010) + '] ' if event.isOnDemand != True else ''
                 suffix = ' [TrueLive SD]'
                 utils.addLink(prefix + title + suffix, streams['truelive.sd'], '', totalItems, showfanart)
@@ -369,7 +504,7 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
                 'month': str(now.month),
                 'day': str(now.day)
             }
-            utils.addDir(prefix + title + suffix, utils.Mode.ARCHIVES_BY_DATE_DAY, '', params, totalItems, showfanart)
+            utils.addDir(prefix + title + suffix, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
             noStream = False
 
     # Check if we want a refresh button (only used for live)
@@ -385,43 +520,50 @@ def __listEvents(session, events, mode, params, addRefresh = False, istream = Fa
     except Exception as e:
         print 'Warning:  Unable to set view as Big List:  ' + str(e)
 
-# Load settings
+# Load general settings
 username = addon.getSetting('username')
 password = addon.getSetting('password')
+resolution = addon.getSetting('resolution')
+print 'Setting resolution = ' + str(resolution)
+shortNames = addon.getSetting('shortnames')
+shortNames = shortNames != None and shortNames.lower() == 'true'
+print 'Setting shortNames = ' + str(shortNames)
+showscores = addon.getSetting('showscores')
+showscores = showscores != None and showscores.lower() == 'true'
+showfanart = addon.getSetting('showfanart')
+showfanart = showfanart != None and showfanart.lower() == 'true'
+
+# Load stream settings
 istream = addon.getSetting('istream')
 istream = istream != None and istream.lower() == 'true'
 flash = addon.getSetting('flash')
 flash = flash != None and flash.lower() == 'true'
 wmv = addon.getSetting('wmv')
 wmv = wmv != None and wmv.lower() == 'true'
-shortNames = addon.getSetting('shortnames')
-shortNames = shortNames != None and shortNames.lower() == 'true'
-rtmp = addon.getSetting('rtmp')
-rtmp = rtmp != None and rtmp.lower() == 'true'
+truelive = addon.getSetting('truelive')
+truelive = truelive != None and truelive.lower() == 'true'
+dvr = addon.getSetting('dvr')
+dvr = truelive != None and dvr.lower() == 'true'
 location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
-resolution = addon.getSetting('resolution')
-showscores = addon.getSetting('showscores')
-showscores = showscores != None and showscores.lower() == 'true'
-showfanart = addon.getSetting('showfanart')
-showfanart = showfanart != None and showfanart.lower() == 'true'
 
-# Load the parameters
+# Load the sub-directory params
 params = utils.getParams()
 
-# Print params for debugging
+# Print sub-directory params for debugging
 for k, v in params.iteritems():
     print k + ': ' + v
 
-# Attempt to parse mode
+# Parse mode
 mode = utils.parseParamInt(params, 'mode')
 
-# Attempt to parse other variables
+# Parse other variables
 year = utils.parseParamInt(params, 'year')
 month = utils.parseParamInt(params, 'month')
 day = utils.parseParamInt(params, 'day')
 team = utils.parseParamString(params, 'team')
+streamId = utils.parseParamString(params, 'streamId')
 invalid = utils.parseParamString(params, 'invalid')
 invalid = invalid != None and invalid.lower() == 'true'
 refresh = utils.parseParamString(params, 'refresh')
@@ -474,28 +616,34 @@ else:
 
 if mode == None or mode == utils.Mode.HOME:
     HOME()
-elif mode == utils.Mode.ARCHIVES:
-    ARCHIVES()
-elif mode == utils.Mode.ARCHIVES_BY_DATE:
-    ARCHIVES_BY_DATE(session)
-elif mode == utils.Mode.ARCHIVES_BY_DATE_YEAR:
-    ARCHIVES_BY_DATE_YEAR(session, year)
-elif mode == utils.Mode.ARCHIVES_BY_DATE_MONTH:
-    ARCHIVES_BY_DATE_MONTH(session, year, month)
-elif mode == utils.Mode.ARCHIVES_BY_DATE_DAY:
-    ARCHIVES_BY_DATE_DAY(session, year, month, day, istream, flash, rtmp, wmv, shortNames, location)
-elif mode == utils.Mode.ARCHIVES_BY_TEAM:
-    ARCHIVES_BY_TEAM(session, shortNames)
-elif mode == utils.Mode.ARCHIVES_BY_TEAM_EVENTS:
-    ARCHIVES_BY_TEAM_EVENTS(session, team, istream, flash, rtmp, wmv, shortNames, location)
-elif mode == utils.Mode.ARCHIVES_BY_EVENT_STREAMS:
-    ARCHIVES_BY_EVENT_STREAMS(session, streamId, istream, flash, rtmp, wmv, shortNames, location)
+elif mode == utils.Mode.ONDEMAND:
+    ONDEMAND()
+elif mode == utils.Mode.ONDEMAND_BYDATE:
+    ONDEMAND_BYDATE(session)
+elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH:
+    ONDEMAND_BYDATE_YEARMONTH(session, year, month)
+elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY:
+    ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)
+    cacheToDisc = False
+elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT:
+    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, streamId)
+    cacheToDisc = False
+elif mode == utils.Mode.ONDEMAND_BYTEAM:
+    ONDEMAND_BYTEAM(session)
+elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM:
+    ONDEMAND_BYTEAM_TEAM(session, team)
+    cacheToDisc = False
+elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT:
+    ONDEMAND_BYTEAM_TEAM_EVENT(session, streamId)
+    cacheToDisc = False
 elif mode == utils.Mode.LIVE:
-    LIVE(session, istream, flash, rtmp, wmv, shortNames, location)
-    cacheToDisc = False # Never cache this view
+    LIVE(session)
     updateListing = refresh
-elif mode == utils.Mode.LIVE_STREAMS:
-	LIVE_STREAMS(session, streamId, istream, flash, rtmp, wmv, shortNames, location)
-
+    cacheToDisc = False
+elif mode == utils.Mode.LIVE_EVENT:
+    LIVE_EVENT(session, streamId)
+    updateListing = refresh
+    cacheToDisc = False
+    
 # Signal end of directory
 xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc = cacheToDisc, updateListing = updateListing)

@@ -63,7 +63,7 @@ msgid "Refresh"
 msgstr ""
 
 msgctxt "#100016"
-msgid "Enable iStreams"
+msgid "Enable iStreams (mobile)"
 msgstr ""
 
 msgctxt "#100017"
@@ -135,5 +135,9 @@ msgid "Stream Settings"
 msgstr ""
 
 msgctxt "#100034"
-msgid "Display Fanart"
+msgid "Display Fanart (requires restart)"
+msgstr ""
+
+msgctxt "#100035"
+msgid "Enable DVR Streams (no rewind functionality)"
 msgstr ""
