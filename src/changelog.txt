@@ -1,3 +1,11 @@
+[b]2.9.0[/b]
+- Added: Restructured live events and streams to improve performance
+- Added: Restructured on-demand events and streams to improve performance
+- Added: Live DVR stream option added, although rewind not currently possible
+- Changed: Team events now display dates on event page
+- Fixed: Minor fixes made to stream filtering
+- Fixed: Corrected a live event status issue
+
 [b]2.8.8[/b]
 - Added: Display score option added to settings for live games
 - Added: Click final live games searches for current day on-demand games

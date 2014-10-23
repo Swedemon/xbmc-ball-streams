@@ -36,15 +36,16 @@ class LiveEvent():
         self.awayTeam = awayTeam
         self.awayScore = awayScore
         self.startTime = startTime
-        self.period = period
+        self.period = period if period != None else ''
         self.isPlaying = isPlaying
         self.feedType = feedType
-        self.isFuture = period == None and not isPlaying
-        self.isFinal = period != None and not isPlaying
+        self.isFuture = self.period == '' and not self.isPlaying
+        self.isFinal = len(self.period)>0 and not self.isPlaying
+        print self
 
     # Overrides this classes string value
     def __str__(self):
-        return repr('Live Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' @ ' + self.eventId)
+        return repr('Live Event: ' + self.homeTeam + ' vs ' + self.awayTeam + ' id: ' + self.eventId + ' period: ' + self.period + ' isPlaying: ' + str(self.isPlaying))
 
 # Represents an on-demand event between two teams
 class OnDemandEvent():
@@ -493,8 +494,8 @@ def onDemandEventStreams(session, eventId, location=None):
 
     # Get the streams
     streams = js['streams'] if 'streams' in js else []
-    HDStreams = js['hdStreams'] if 'hdStreams' in js else []
-    SDStreams = js['sdStreams'] if 'sdStreams' in js else []
+    hdStreams = js['HDstreams'] if 'HDstreams' in js else []
+    sdStreams = js['SDstreams'] if 'SDstreams' in js else []
 
     # Create map of streams
     result = {

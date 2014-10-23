@@ -14,5 +14,6 @@
         <setting id="truelive" type="bool" label="100026" default="true" />
         <setting id="istream" type="bool" label="100016" default="true" />
         <setting id="wmv" type="bool" label="100027" default="true" />
+        <setting id="dvr" type="bool" label="100035" default="false" />
     </category>
 </settings>

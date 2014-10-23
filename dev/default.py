@@ -124,7 +124,8 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         else:
             title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
         params = {
-            'eventId': event.eventId
+            'eventId': event.eventId,
+            'feedType': event.feedType
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT, '', params, totalItems, showfanart)
 
@@ -137,9 +138,10 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
 # a list of on-demand streams for a given event
-def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId):
+def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType):
     print 'ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId)'
     print 'eventId: ' + eventId
+    print 'feedType: ' + str(feedType)
 
     # Build streams
     onDemandStream = ballstreams.onDemandEventStreams(session, eventId, location)
@@ -153,9 +155,9 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId):
     homeTeam = onDemandStream.homeTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.homeTeam, addonPath)
     awayTeam = onDemandStream.awayTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.awayTeam, addonPath)
     matchupStr = awayTeam + ' @ ' + homeTeam
-    if onDemandStream.feedType == 'Home Feed':
+    if feedType == 'Home Feed':
         matchupStr = matchupStr + '*'
-    elif onDemandStream.feedType == 'Away Feed':
+    elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
     # Build title
     title = onDemandStream.event + ': ' + matchupStr
@@ -175,13 +177,6 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId):
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
-
-    # Add refresh button
-    refreshParams = {
-        'refresh': 'True',
-        'eventId': eventId
-    }
-    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
     # Set view as Big List
     try:
@@ -238,7 +233,8 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
         else:
             title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
         params = {
-            'eventId': event.eventId
+            'eventId': event.eventId,
+            'feedType': event.feedType
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT, '', params, totalItems, showfanart)
 
@@ -251,9 +247,10 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
 # Method to draw the archive streams by event screen
 # which scrapes the external source and presents
 # a list of streams for a given stream id
-def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId):
+def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType):
     print 'ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId)'
     print 'eventId: ' + eventId
+    print 'feedType: ' + str(feedType)
 
     # Build streams
     onDemandStream = ballstreams.onDemandEventStreams(session, eventId, location)
@@ -267,9 +264,9 @@ def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId):
     homeTeam = onDemandStream.homeTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.homeTeam, addonPath)
     awayTeam = onDemandStream.awayTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.awayTeam, addonPath)
     matchupStr = awayTeam + ' @ ' + homeTeam
-    if onDemandStream.feedType == 'Home Feed':
+    if feedType == 'Home Feed':
         matchupStr = matchupStr + '*'
-    elif onDemandStream.feedType == 'Away Feed':
+    elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
     # Build title
     title = onDemandStream.event + ': ' + matchupStr
@@ -289,13 +286,6 @@ def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId):
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
-
-    # Add refresh button
-    refreshParams = {
-        'refresh': 'True',
-        'eventId': eventId
-    }
-    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
     # Set view as Big List
     try:
@@ -333,14 +323,18 @@ def LIVE(session):
         periodStr = ''
         if event.period == 'HALF - ':
             periodStr = ' - HALF'
-        else:
+        elif event.period != '':
             periodStr = ' - ' + event.period if event.period != None else ''
         # Build score
         homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
         awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
         scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture else ''
+        # Build start time
+        startTimeStr = ''
+        if periodStr == '':
+            startTimeStr = ' - ' + event.startTime
         # Build title
-        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr
+        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr
         if event.isFinal:
             now = ballstreams.adjustedDateTime()
             params = {
@@ -350,6 +344,9 @@ def LIVE(session):
             }
             utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
         elif event.isFuture:
+            refreshParams = {
+                'refresh': 'True'
+            }
             utils.addDir(title, mode, '', refreshParams, totalItems, showfanart)
         else:
             params = {
@@ -398,14 +395,18 @@ def LIVE_EVENT(session, eventId):
     periodStr = ''
     if liveStream.period == 'HALF - ':
         periodStr = ' - HALF'
-    else:
+    elif liveStream.period != '':
         periodStr = ' - ' + liveStream.period if liveStream.period != None else ''
     # Build score
     homeScore = liveStream.homeScore if liveStream.homeScore != None and len(liveStream.homeScore)>0 else '0'
     awayScore = liveStream.awayScore if liveStream.awayScore != None and len(liveStream.awayScore)>0 else '0'
     scoreStr = ' - ' + awayScore + '-' + homeScore if showscores else ''
+    # Build start time
+    startTimeStr = ''
+    if periodStr == '':
+        startTimeStr = ' - ' + liveStream.startTime
     # Build title
-    title = prefix + liveStream.event + ': ' + matchupStr + scoreStr + periodStr
+    title = prefix + liveStream.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr
 
     # Add links
     if truelive and resolution != 'SD Only' and liveStream.streamSet['truelive.hd'] != None:
@@ -494,6 +495,7 @@ month = utils.parseParamInt(params, 'month')
 day = utils.parseParamInt(params, 'day')
 team = utils.parseParamString(params, 'team')
 eventId = utils.parseParamString(params, 'eventId')
+feedType = utils.parseParamString(params, 'feedType')
 invalid = utils.parseParamString(params, 'invalid')
 invalid = invalid != None and invalid.lower() == 'true'
 refresh = utils.parseParamString(params, 'refresh')
@@ -555,18 +557,14 @@ elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH:
     ONDEMAND_BYDATE_YEARMONTH(session, year, month)
 elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY:
     ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)
-    cacheToDisc = False
 elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT:
-    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId)
-    cacheToDisc = False
+    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType)
 elif mode == utils.Mode.ONDEMAND_BYTEAM:
     ONDEMAND_BYTEAM(session)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM:
     ONDEMAND_BYTEAM_TEAM(session, team)
-    cacheToDisc = False
 elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT:
-    ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId)
-    cacheToDisc = False
+    ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType)
 elif mode == utils.Mode.LIVE:
     LIVE(session)
     updateListing = refresh

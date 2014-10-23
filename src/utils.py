@@ -3,20 +3,22 @@ import urllib
 import sys
 
 # xbmc-ball-streams
-# author: craig mcnicholas
-# contact: craig@designdotworks.co.uk
+# author: craig mcnicholas, andrew wise
+# contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # Represents an enumeration for application modes
 class Mode:
     HOME = 1
-    ARCHIVES = 2
-    ARCHIVES_BY_DATE = 3
-    ARCHIVES_BY_DATE_YEAR = 4
-    ARCHIVES_BY_DATE_MONTH = 5
-    ARCHIVES_BY_DATE_DAY = 6
-    ARCHIVES_BY_TEAM = 7
-    ARCHIVES_BY_TEAM_EVENTS = 8
-    LIVE = 9
+    ONDEMAND = 2
+    ONDEMAND_BYDATE = 3
+    ONDEMAND_BYDATE_YEARMONTH = 4
+    ONDEMAND_BYDATE_YEARMONTH_DAY = 5
+    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT = 6
+    ONDEMAND_BYTEAM = 7
+    ONDEMAND_BYTEAM_TEAM = 8
+    ONDEMAND_BYTEAM_TEAM_EVENT = 9
+    LIVE = 10
+    LIVE_EVENT = 11
 
 # Method to get the parameters for the current view
 # @return an array of parameters
