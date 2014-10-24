@@ -113,25 +113,19 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         day = int(parts[1])
         month = int(parts[0])
         year = int(parts[2])
-        dateStr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
-
-        # Build matchup
+        datestr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
         homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
         awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
-        matchupStr = awayTeam + ' @ ' + homeTeam
-        if awayTeam == '' or homeTeam == '': # Indicates special event
-            matchupStr = awayTeam + homeTeam
-        if feedType == 'Home Feed':
-            matchupStr = matchupStr + '*'
-        elif feedType == 'Away Feed':
-            matchupStr = awayTeam + '* @ ' + homeTeam
-        # Build title
-        title = event.event + ': ' + matchupStr + dateStr
-
+        title = ''
+        if event.feedType == 'Home Feed':
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + '*' + datestr
+        elif event.feedType == 'Away Feed':
+            title = event.event + ': ' + awayTeam + '* @ ' + homeTeam + datestr
+        else:
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
         params = {
             'eventId': event.eventId,
-            'feedType': event.feedType,
-            'dateStr': dateStr
+            'feedType': event.feedType
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT, '', params, totalItems, showfanart)
 
@@ -144,11 +138,10 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
 # a list of on-demand streams for a given event
-def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
-    print 'ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr)'
+def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType):
+    print 'ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId)'
     print 'eventId: ' + eventId
     print 'feedType: ' + str(feedType)
-    print 'dateStr: ' + dateStr
 
     # Build streams
     onDemandStream = ballstreams.onDemandEventStreams(session, eventId, location)
@@ -162,14 +155,12 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     homeTeam = onDemandStream.homeTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.homeTeam, addonPath)
     awayTeam = onDemandStream.awayTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.awayTeam, addonPath)
     matchupStr = awayTeam + ' @ ' + homeTeam
-    if awayTeam == '' or homeTeam == '': # Indicates special event
-        matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
         matchupStr = matchupStr + '*'
     elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
     # Build title
-    title = onDemandStream.event + ': ' + matchupStr + dateStr
+    title = onDemandStream.event + ': ' + matchupStr
 
     if flash and onDemandStream.streamSet['flash'] != None:
         suffix = ' [Flash]'
@@ -231,24 +222,19 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
         day = int(parts[1])
         month = int(parts[0])
         year = int(parts[2])
-        dateStr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
-
+        datestr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
         homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
         awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
-        matchupStr = awayTeam + ' @ ' + homeTeam
-        if awayTeam == '' or homeTeam == '': # Indicates special event
-            matchupStr = awayTeam + homeTeam
-        if feedType == 'Home Feed':
-            matchupStr = matchupStr + '*'
-        elif feedType == 'Away Feed':
-            matchupStr = awayTeam + '* @ ' + homeTeam
-        # Build title
-        title = event.event + ': ' + matchupStr + dateStr
-
+        title = ''
+        if event.feedType == 'Home Feed':
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + '*' + datestr
+        elif event.feedType == 'Away Feed':
+            title = event.event + ': ' + awayTeam + '* @ ' + homeTeam + datestr
+        else:
+            title = event.event + ': ' + awayTeam + ' @ ' + homeTeam + datestr
         params = {
             'eventId': event.eventId,
-            'feedType': event.feedType,
-            'dateStr': dateStr
+            'feedType': event.feedType
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT, '', params, totalItems, showfanart)
 
@@ -261,11 +247,10 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
 # Method to draw the archive streams by event screen
 # which scrapes the external source and presents
 # a list of streams for a given stream id
-def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr):
-    print 'ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr)'
+def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType):
+    print 'ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId)'
     print 'eventId: ' + eventId
     print 'feedType: ' + str(feedType)
-    print 'dateStr: ' + str(dateStr)
 
     # Build streams
     onDemandStream = ballstreams.onDemandEventStreams(session, eventId, location)
@@ -279,14 +264,12 @@ def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr):
     homeTeam = onDemandStream.homeTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.homeTeam, addonPath)
     awayTeam = onDemandStream.awayTeam if not shortNames else ballstreams.shortTeamName(onDemandStream.awayTeam, addonPath)
     matchupStr = awayTeam + ' @ ' + homeTeam
-    if awayTeam == '' or homeTeam == '': # Indicates special event
-        matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
         matchupStr = matchupStr + '*'
     elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
     # Build title
-    title = onDemandStream.event + ': ' + matchupStr + str(dateStr)
+    title = onDemandStream.event + ': ' + matchupStr
 
     if flash and onDemandStream.streamSet['flash'] != None:
         suffix = ' [Flash]'
@@ -332,8 +315,6 @@ def LIVE(session):
         homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
         awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
         matchupStr = awayTeam + ' @ ' + homeTeam
-        if awayTeam == '' or homeTeam == '': # Indicates special event
-            matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
             matchupStr = matchupStr + '*'
         elif event.feedType == 'Away Feed':
@@ -347,7 +328,7 @@ def LIVE(session):
         # Build score
         homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
         awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
-        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture and periodStr != '' else ''
+        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture else ''
         # Build start time
         startTimeStr = ''
         if periodStr == '':
@@ -406,8 +387,6 @@ def LIVE_EVENT(session, eventId):
     homeTeam = liveStream.homeTeam if not shortNames else ballstreams.shortTeamName(liveStream.homeTeam, addonPath)
     awayTeam = liveStream.awayTeam if not shortNames else ballstreams.shortTeamName(liveStream.awayTeam, addonPath)
     matchupStr = awayTeam + ' @ ' + homeTeam
-    if awayTeam == '' or homeTeam == '': #indicates special event
-        matchupStr = awayTeam + homeTeam
     if liveStream.feedType == 'Home Feed':
         matchupStr = matchupStr + '*'
     elif liveStream.feedType == 'Away Feed':
@@ -421,7 +400,7 @@ def LIVE_EVENT(session, eventId):
     # Build score
     homeScore = liveStream.homeScore if liveStream.homeScore != None and len(liveStream.homeScore)>0 else '0'
     awayScore = liveStream.awayScore if liveStream.awayScore != None and len(liveStream.awayScore)>0 else '0'
-    scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and periodStr != '' else ''
+    scoreStr = ' - ' + awayScore + '-' + homeScore if showscores else ''
     # Build start time
     startTimeStr = ''
     if periodStr == '':
@@ -517,7 +496,6 @@ day = utils.parseParamInt(params, 'day')
 team = utils.parseParamString(params, 'team')
 eventId = utils.parseParamString(params, 'eventId')
 feedType = utils.parseParamString(params, 'feedType')
-dateStr = utils.parseParamString(params, 'dateStr')
 invalid = utils.parseParamString(params, 'invalid')
 invalid = invalid != None and invalid.lower() == 'true'
 refresh = utils.parseParamString(params, 'refresh')
@@ -580,13 +558,13 @@ elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH:
 elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY:
     ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)
 elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT:
-    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr)
+    ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType)
 elif mode == utils.Mode.ONDEMAND_BYTEAM:
     ONDEMAND_BYTEAM(session)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM:
     ONDEMAND_BYTEAM_TEAM(session, team)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT:
-    ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr)
+    ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType)
 elif mode == utils.Mode.LIVE:
     LIVE(session)
     updateListing = refresh
