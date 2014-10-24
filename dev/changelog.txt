@@ -1,3 +1,7 @@
+[b]2.9.1[/b]
+- Added: Added date to on-demand stream titles
+- Fixed: Live and on-demand special event titles supported
+
 [b]2.9.0[/b]
 - Added: Restructured live events and streams to improve performance
 - Added: Restructured on-demand events and streams to improve performance
