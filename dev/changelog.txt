@@ -1,4 +1,5 @@
 [b]2.9.1[/b]
+- Added: Australia added to location list
 - Added: Added date to on-demand stream titles
 - Fixed: Live and on-demand special event titles supported
 

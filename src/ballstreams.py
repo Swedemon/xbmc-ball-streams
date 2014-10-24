@@ -11,11 +11,13 @@ class Session():
     # Creates a new session instance
     # @param userId the users id
     # @param username the users supplied username
+    # @param favteam the users favorite team as set on the website account settings
     # @param membership the users membership status, either REGULAR or PREMIUM
     # @param token the users session token
-    def __init__(self, userId, username, membership, token):
+    def __init__(self, userId, username, favteam, membership, token):
         self.userId = userId
         self.username = username
+        self.favteam = favteam
         self.membership = membership
         self.isPremium = membership.lower() == 'premium'
         self.token = token
@@ -182,6 +184,7 @@ def login(username, password):
     # Get the user session info
     userId = js['uid']
     username = js['username']
+    favteam = js['favteam']
     membership = js['membership']
     token = js['token']
 
@@ -202,7 +205,7 @@ def login(username, password):
         raise ApiException('API Error: The token was null or empty');
 
     # Create and return session instance
-    return Session(userId, username, membership, token)
+    return Session(userId, username, favteam, membership, token)
 
 # Method to check the ip of a username
 # @param username the username to check the ip of
