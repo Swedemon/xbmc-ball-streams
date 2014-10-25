@@ -1,8 +1,9 @@
 [b]2.9.2[/b]
 - Added: Highlights supported - display setting included
-- Added: First on-demand screen shows recent events - setting added for how many days back
+- Added: Condensed Games supported - display setting included
+- Added: Initial on-demand screen shows recent events - display setting included
 - Added: Setting added to set view mode for event and stream screens
-- Changed: Title dates now display year
+- Changed: Title dates now include year
 
 [b]2.9.1[/b]
 - Added: Australia location added.
