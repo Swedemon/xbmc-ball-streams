@@ -1,3 +1,9 @@
+[b]2.9.2[/b]
+- Added: Highlights supported - display setting included
+- Added: First on-demand screen shows recent events - setting added for how many days back
+- Added: Setting added to set view mode for event and stream screens
+- Changed: Title dates now display year
+
 [b]2.9.1[/b]
 - Added: Australia location added.
 - Added: Added date to on-demand stream titles

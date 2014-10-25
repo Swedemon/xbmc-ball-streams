@@ -15,10 +15,11 @@ class Mode:
     ONDEMAND_BYDATE_YEARMONTH_DAY = 5
     ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT = 6
     ONDEMAND_BYTEAM = 7
-    ONDEMAND_BYTEAM_TEAM = 8
-    ONDEMAND_BYTEAM_TEAM_EVENT = 9
-    LIVE = 10
-    LIVE_EVENT = 11
+    ONDEMAND_BYTEAM_LEAGUE = 8
+    ONDEMAND_BYTEAM_LEAGUE_TEAM = 9
+    ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT = 10
+    LIVE = 11
+    LIVE_EVENT = 12
 
 # Method to get the parameters for the current view
 # @return an array of parameters

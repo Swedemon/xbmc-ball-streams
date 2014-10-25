@@ -19,7 +19,7 @@ msgid "Sorry but a valid stream was not found."
 msgstr ""
 
 msgctxt "#100005"
-msgid "On Demand"
+msgid "On Demand / Highlights"
 msgstr ""
 
 msgctxt "#100006"
@@ -140,4 +140,24 @@ msgstr ""
 
 msgctxt "#100035"
 msgid "Enable DVR Streams (no rewind functionality)"
+msgstr ""
+
+msgctxt "#100036"
+msgid "Display Highlights"
+msgstr ""
+
+msgctxt "#100037"
+msgid "Event View Mode"
+msgstr ""
+
+msgctxt "#100038"
+msgid "Search # of Days Back for Recent Events"
+msgstr ""
+
+msgctxt "#100039"
+msgid "Display Condensed"
+msgstr ""
+
+msgctxt "#100040"
+msgid "OnDemand Settings"
 msgstr ""
