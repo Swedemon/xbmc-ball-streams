@@ -43,7 +43,6 @@ class LiveEvent():
         self.feedType = feedType
         self.isFuture = self.period == '' and not self.isPlaying
         self.isFinal = len(self.period)>0 and not self.isPlaying
-        print self
 
     # Overrides this classes string value
     def __str__(self):
@@ -103,8 +102,9 @@ class OnDemandStream():
 # Represents a highlight
 class Highlight():
     # Creates a new highlight instance
-    def __init__(self, eventId, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc):
+    def __init__(self, eventId, date, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc):
         self.eventId = eventId
+        self.date = date
         self.event = event
         self.homeTeam = homeTeam
         self.awayTeam = awayTeam
@@ -113,6 +113,29 @@ class Highlight():
         self.highQualitySrc = highQualitySrc
         self.homeSrc = homeSrc
         self.awaySrc = awaySrc
+
+    # Overrides this classes string value
+    def __str__(self):
+        return repr('Highlight: ' + self.homeTeam + ' vs ' + self.awayTeam + ' ID ' + self.eventId + ' on ' + self.date)
+
+# Represents a condensed game
+class CondensedGame():
+    # Creates a new instance
+    def __init__(self, eventId, date, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc):
+        self.eventId = eventId
+        self.date = date
+        self.event = event
+        self.homeTeam = homeTeam
+        self.awayTeam = awayTeam
+        self.lowQualitySrc = lowQualitySrc
+        self.medQualitySrc = medQualitySrc
+        self.highQualitySrc = highQualitySrc
+        self.homeSrc = homeSrc
+        self.awaySrc = awaySrc
+
+    # Overrides this classes string value
+    def __str__(self):
+        return repr('Condensed Game: ' + self.homeTeam + ' vs ' + self.awayTeam + ' ID ' + self.eventId + ' on ' + self.date)
 
 # Represents a team
 class Team():
@@ -295,7 +318,7 @@ def onDemandDates(session):
 # Method to retrieve available teams for ball streams
 # @param session the session details to login with
 # @return a list of teams
-def teams(session):
+def teams(session, league = None):
     # Setup teams data
     data = urllib.urlencode({
         'token': session.token
@@ -325,17 +348,18 @@ def teams(session):
     for team in teams:
         # Get the team variables
         teamName = team['name']
-        league = team['league']
-
+        leagueName = team['league']
+        
         # Check team name
         if teamName == None:
             raise ApiException('API Error: The team name was null');
 
-        # Check team league
-        if league == None:
-            raise ApiException('API Error: The league was null');
+        # Check team leagueName
+        if leagueName == None:
+            raise ApiException('API Error: The leagueName was null');
 
-        results.append(Team(teamName, league))
+        if league == None or league == leagueName:
+            results.append(Team(teamName, leagueName))
 
     return results
 
@@ -354,29 +378,48 @@ def dateOnDemandEvents(session, date):
         'token': session.token,
         'date': month + '/' + day + '/' + year
     })
-
+    
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
 
-    return parseOnDemandEvents(url)
+    events = parseOnDemandEvents(url)
+    
+    return events
 
 # Method to get on-demand highlights for a given date
 # @param session the session details to login with
 # @param date a date instance to return the highlights for
 # @return a list of highlights
-def dateOnDemandHighlights(session, date):
+def dateOnDemandHighlights(session, date = None, team = None):
+    data = ''
     # Strip the date into usable strings for formatting
-    year = str(date.year)
-    month = '%02d' % (date.month,)
-    day = '%02d' % (date.day,)
-
-    # Setup events for date data
-    data = urllib.urlencode({
-        'token': session.token,
-        'date': month + '/' + day + '/' + year
-    })
+    if date != None and team != None and len(team) > 0:
+        year = str(date.year)
+        month = '%02d' % (date.month,)
+        day = '%02d' % (date.day,)
+        data = urllib.urlencode({
+                'token': session.token,
+                'team': team,
+                'date': month + '/' + day + '/' + year
+            })
+    elif date != None:
+        year = str(date.year)
+        month = '%02d' % (date.month,)
+        day = '%02d' % (date.day,)
+        data = urllib.urlencode({
+                'token': session.token,
+                'date': month + '/' + day + '/' + year
+            })
+    elif team != None and len(team) > 0:
+        data = urllib.urlencode({
+                'token': session.token,
+                'team': team
+            })
+    else:
+        data = urllib.urlencode({
+                'token': session.token
+            })
 
     url = 'https://api.ballstreams.com/GetHighlights?' + data
-    print 'highlights: ' + url
 
     # Get response for events
     request = __setupRequest(url)
@@ -384,12 +427,119 @@ def dateOnDemandHighlights(session, date):
     page = response.read()
     response.close()
 
+    highlights = []
+    
     # Parse the events response
     try:
         js = json.loads(page)
-        return js
     except Exception as e:
-        return None
+        print 'Warning: Unable to retrieve highlights for date: ' + str(date) + ' team: ' + str(team)
+        return highlights
+
+    __checkStatus(js)
+
+    # Get the schedule array
+    highlightArray = js['highlights']
+
+    # Check schedule
+    if highlightArray == None:
+        return None;
+
+    highlights = []
+    for highlight in highlightArray:
+        # Get the schedule variables
+        eventId = highlight['id']
+        hDate = highlight['date']
+        event = highlight['event']
+        homeTeam = highlight['homeTeam']
+        awayTeam = highlight['awayTeam']
+        lowQualitySrc = highlight['lowQualitySrc']
+        medQualitySrc = highlight['medQualitySrc']
+        highQualitySrc = highlight['highQualitySrc']
+        homeSrc = highlight['homeSrc']
+        awaySrc = highlight['awaySrc']
+        
+        highlights.append(Highlight(eventId, hDate, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc))
+
+    return highlights
+
+# Method to get on-demand condensed games for a given date
+# @param session the session details to login with
+# @param date a date instance to return the condensed games for
+# @return a list of condensed games
+def dateOnDemandCondensed(session, date = None, team = None):
+    data = ''
+    # Strip the date into usable strings for formatting
+    if date != None and team != None and len(team) > 0:
+        year = str(date.year)
+        month = '%02d' % (date.month,)
+        day = '%02d' % (date.day,)
+        data = urllib.urlencode({
+                'token': session.token,
+                'team': team,
+                'date': month + '/' + day + '/' + year
+            })
+    elif date != None:
+        year = str(date.year)
+        month = '%02d' % (date.month,)
+        day = '%02d' % (date.day,)
+        data = urllib.urlencode({
+                'token': session.token,
+                'date': month + '/' + day + '/' + year
+            })
+    elif team != None and len(team) > 0:
+        data = urllib.urlencode({
+                'token': session.token,
+                'team': team
+            })
+    else:
+        data = urllib.urlencode({
+                'token': session.token
+            })
+
+    url = 'https://api.ballstreams.com/GetCondensedGames?' + data
+
+    # Get response for events
+    request = __setupRequest(url)
+    response = urllib2.urlopen(request)
+    page = response.read()
+    response.close()
+
+    condenseds = []
+    
+    # Parse the events response
+    try:
+        js = json.loads(page)
+    except Exception as e:
+        print 'Warning: Unable to retrieve condensed games for date: ' + str(date) + ' team: ' + str(team)
+        return condenseds
+
+    __checkStatus(js)
+
+    # Get the schedule array
+    condensedGames = js['condensed']
+
+    # Check schedule
+    if condensedGames == None:
+        return None;
+
+    condenseds = []
+    for condensed in condensedGames:
+        # Get the schedule variables
+        eventId = condensed['id']
+        hDate = condensed['date']
+        event = condensed['event']
+        homeTeam = condensed['homeTeam']
+        awayTeam = condensed['awayTeam']
+        lowQualitySrc = condensed['lowQualitySrc']
+        medQualitySrc = condensed['medQualitySrc']
+        highQualitySrc = condensed['highQualitySrc']
+        homeSrc = condensed['homeSrc']
+        awaySrc = condensed['awaySrc']
+        
+        condenseds.append(CondensedGame(eventId, hDate, event, homeTeam, awayTeam, lowQualitySrc, medQualitySrc, highQualitySrc, homeSrc, awaySrc))
+
+    return condenseds
 
 # Method to get the events for a given team
 # @param session the session details to login with
@@ -896,13 +1046,18 @@ def shortTeamName(teamName, root):
 def adjustedDateTime():
     return datetime.datetime.utcnow() + datetime.timedelta(hours=-8)
 
+# Compute the current date with number of days back.
+# @return datetime today minus number of days back
+def getRecentDateTime(daysBack = 0):
+    now = datetime.datetime.now()
+    return now - datetime.timedelta(daysBack)
+
 # Method to setup a request object to ballstreams
 # @param url the url to setup the request to
 # @return an urllib2.Request object
 def __setupRequest(url):
     request = urllib2.Request(url)
     request.add_header('From', 'xbmc-ball-streams')
-    print str(url)
 
     return request
 

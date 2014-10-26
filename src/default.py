@@ -25,6 +25,9 @@ def ONDEMAND():
     print 'ONDEMAND()'
     utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, showfanart)
     utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, showfanart)
+    
+    # Append Recent day events
+    ONDEMAND_RECENT(session)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -102,9 +105,10 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
     date = datetime.date(year, month, day)
     try:
         events = ballstreams.dateOnDemandEvents(session, date)
-    except:
+    except Exception as e:
+        print 'Warning:  No events found for date: ' + str(date) + ' Msg: ' + str(e)
         return
-
+        
     totalItems = len(events)
 
     for event in events:
@@ -113,7 +117,7 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         day = int(parts[1])
         month = int(parts[0])
         year = int(parts[2])
-        dateStr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
+        dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
 
         # Build matchup
         homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
@@ -135,11 +139,12 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT, '', params, totalItems, showfanart)
 
-    # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -187,11 +192,17 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
-    # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    if showhighlight:
+        HIGHLIGHTS_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+    if showcondensed:
+        CONDENSEDGAMES_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
@@ -206,18 +217,39 @@ def ONDEMAND_BYTEAM(session):
     totalItems = len(teams)
 
     # Add directories for teams
+    league = []
+    for team in teams:
+        if (league.count(team.league) == 0):
+            league.append(team.league)
+            params = {
+                'league': team.league
+            }
+            title = team.league
+            utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE, '', params, totalItems, showfanart)
+
+def ONDEMAND_BYTEAM_LEAGUE(session, league):
+    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league)'
+    print 'League: ' + league
+
+    # Retrieve the teams
+    teams = ballstreams.teams(session, league)
+
+    # Count total number of items for ui
+    totalItems = len(teams)
+
+    # Add directories for teams
     for team in teams:
         params = {
             'team': team.name
         }
-        title = team.league + ': ' + team.name if team.league != '' else team.name
-        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM, '', params, totalItems, showfanart)
+        title = team.name
+        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM, '', params, totalItems, showfanart)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
 # a list of events for a given team
-def ONDEMAND_BYTEAM_TEAM(session, team):
-    print 'ONDEMAND_BYTEAM_TEAM(session, team)'
+def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team):
+    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team)'
     print 'Team: ' + team
 
     # Retrieve the team events
@@ -231,7 +263,7 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
         day = int(parts[1])
         month = int(parts[0])
         year = int(parts[2])
-        dateStr = ' - ' + datetime.date(year, month, day).strftime('%b %d')
+        dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
 
         homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
         awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
@@ -250,19 +282,113 @@ def ONDEMAND_BYTEAM_TEAM(session, team):
             'feedType': event.feedType,
             'dateStr': dateStr
         }
-        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT, '', params, totalItems, showfanart)
+        utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT, '', params, totalItems, showfanart)
 
     # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
+# Method to draw the highlights screen
+# which scrapes the external source and presents
+# a list of highlights for a given team and/or date
+def HIGHLIGHTS_BYTEAM_TEAMDATE(session, team, date):
+    print 'HIGHLIGHTS_BYTEAM_TEAMDATE(session, team, date)'
+    print 'Team: ' + str(team)
+    print 'Date: ' + str(date)
+
+    highlights = ballstreams.dateOnDemandHighlights(session, date, team)
+
+    totalItems = len(highlights)
+
+    src = []
+    for highlight in highlights:
+        if team == None or (team == highlight.homeTeam or team == highlight.awayTeam):
+            # Create datetime for string formatting
+            parts = highlight.date.split('/')
+            day = int(parts[1])
+            month = int(parts[0])
+            year = int(parts[2])
+            dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
+            # Build matchup
+            homeTeam = highlight.homeTeam if not shortNames else ballstreams.shortTeamName(highlight.homeTeam, addonPath)
+            awayTeam = highlight.awayTeam if not shortNames else ballstreams.shortTeamName(highlight.awayTeam, addonPath)
+            matchupStr = awayTeam + ' @ ' + homeTeam
+            if awayTeam == '' or homeTeam == '': # Indicates special event
+                matchupStr = awayTeam + homeTeam
+            # Build title
+            title = '[Highlight] ' + highlight.event + ': ' + matchupStr + dateStr
+
+            if highlight.highQualitySrc != None and len(highlight.highQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
+                utils.addLink(title + ' [Hi]', highlight.highQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.highQualitySrc)
+            if highlight.medQualitySrc != None and len(highlight.medQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
+                utils.addLink(title + ' [Med]', highlight.medQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.medQualitySrc)
+            if highlight.lowQualitySrc != None and len(highlight.lowQualitySrc) > 0 and src.count(highlight.lowQualitySrc) == 0:
+                utils.addLink(title + ' [Lo]', highlight.lowQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.lowQualitySrc)
+            if highlight.homeSrc != None and len(highlight.homeSrc) > 0 and src.count(highlight.homeSrc) == 0:
+                utils.addLink(title + ' [Home]', highlight.homeSrc, '', totalItems, showfanart)
+                src.append(highlight.homeSrc)
+            if highlight.awaySrc != None and len(highlight.awaySrc) > 0 and src.count(highlight.awaySrc) == 0:
+                utils.addLink(title + ' [Away]', highlight.awaySrc, '', totalItems, showfanart)
+                src.append(highlight.awaySrc)
+
+# Method to draw the highlights screen
+# which scrapes the external source and presents
+# a list of highlights for a given team and/or date
+def CONDENSEDGAMES_BYTEAM_TEAMDATE(session, team, date):
+    print 'CONDENSEDGAMES_BYTEAM_TEAMDATE(session, team, date)'
+    print 'Team: ' + str(team)
+    print 'Date: ' + str(date)
+
+    condensedGames = ballstreams.dateOnDemandHighlights(session, date, team)
+
+    totalItems = len(condensedGames)
+
+    src = []
+    for condensedGame in condensedGames:
+        if team == None or (team == condensedGame.homeTeam or team == condensedGame.awayTeam):
+            # Create datetime for string formatting
+            parts = condensedGame.date.split('/')
+            day = int(parts[1])
+            month = int(parts[0])
+            year = int(parts[2])
+            dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
+            # Build matchup
+            homeTeam = condensedGame.homeTeam if not shortNames else ballstreams.shortTeamName(condensedGame.homeTeam, addonPath)
+            awayTeam = condensedGame.awayTeam if not shortNames else ballstreams.shortTeamName(condensedGame.awayTeam, addonPath)
+            matchupStr = awayTeam + ' @ ' + homeTeam
+            if awayTeam == '' or homeTeam == '': # Indicates special event
+                matchupStr = awayTeam + homeTeam
+            # Build title
+            title = '[Condensed] ' + condensedGame.event + ': ' + matchupStr + dateStr
+
+            if condensedGame.highQualitySrc != None and len(condensedGame.highQualitySrc) > 0 and src.count(condensedGame.medQualitySrc) == 0:
+                utils.addLink(title + ' [Hi]', condensedGame.highQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.highQualitySrc)
+            if condensedGame.medQualitySrc != None and len(condensedGame.medQualitySrc) > 0 and src.count(condensedGame.medQualitySrc) == 0:
+                utils.addLink(title + ' [Med]', condensedGame.medQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.medQualitySrc)
+            if condensedGame.lowQualitySrc != None and len(condensedGame.lowQualitySrc) > 0 and src.count(condensedGame.lowQualitySrc) == 0:
+                utils.addLink(title + ' [Lo]', condensedGame.lowQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.lowQualitySrc)
+            if condensedGame.homeSrc != None and len(condensedGame.homeSrc) > 0 and src.count(condensedGame.homeSrc) == 0:
+                utils.addLink(title + ' [Home]', condensedGame.homeSrc, '', totalItems, showfanart)
+                src.append(condensedGame.homeSrc)
+            if condensedGame.awaySrc != None and len(condensedGame.awaySrc) > 0 and src.count(condensedGame.awaySrc) == 0:
+                utils.addLink(title + ' [Away]', condensedGame.awaySrc, '', totalItems, showfanart)
+                src.append(condensedGame.awaySrc)
 
 # Method to draw the archive streams by event screen
 # which scrapes the external source and presents
 # a list of streams for a given stream id
-def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr):
-    print 'ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr)'
+def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
+    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr)'
     print 'eventId: ' + eventId
     print 'feedType: ' + str(feedType)
     print 'dateStr: ' + str(dateStr)
@@ -304,11 +430,17 @@ def ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
-    # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    if showhighlight:
+        HIGHLIGHTS_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+    if showcondensed:
+        CONDENSEDGAMES_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the live screen
 # which scrapes the external source and presents
@@ -379,11 +511,12 @@ def LIVE(session):
     }
     utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
-    # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the live streams screen
 # which scrapes the external source and presents
@@ -468,11 +601,35 @@ def LIVE_EVENT(session, eventId):
     }
     utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
-    # Set view as Big List
-    try:
-        xbmc.executebuiltin('Container.SetViewMode(51)')
-    except Exception as e:
-        print 'Warning:  Unable to set view as Big List:  ' + str(e)
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
+# Method to populate recent matchups and higlights
+# which scrapes the external source and presents
+# a list of recent days events
+def ONDEMAND_RECENT(session):
+    print 'ONDEMAND_RECENT(session)'
+    print 'daysback: ' + daysback
+
+    # Check disable option
+    if daysback == 'Disable':
+        return
+
+    # Loop daysback to Build event list
+    i = 0
+    while i <= int(daysback):
+        # get current date
+        recentDate = ballstreams.getRecentDateTime(i)
+
+        # Build events for day
+        ONDEMAND_BYDATE_YEARMONTH_DAY(session, recentDate.year, recentDate.month, recentDate.day)
+
+        # Increment loop to avoid TO INFINITY AND BEYOND!!
+        i += 1
 
 # Load general settings
 username = addon.getSetting('username')
@@ -484,6 +641,17 @@ showscores = addon.getSetting('showscores')
 showscores = showscores != None and showscores.lower() == 'true'
 showfanart = addon.getSetting('showfanart')
 showfanart = showfanart != None and showfanart.lower() == 'true'
+showhighlight = addon.getSetting('showhighlight')
+showhighlight = showhighlight != None and showhighlight.lower() == 'true'
+showcondensed = addon.getSetting('showcondensed')
+showcondensed = showcondensed != None and showcondensed.lower() == 'true'
+viewmode = addon.getSetting('viewmode')
+if viewmode != None and viewmode == 'Big List':
+    viewmode = '51'
+elif viewmode != None and viewmode == 'List':
+    viewmode = '50'
+else: # Default
+    viewmode = None
 
 # Load stream settings
 istream = addon.getSetting('istream')
@@ -499,13 +667,14 @@ dvr = dvr != None and dvr.lower() == 'true'
 location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
+daysback = addon.getSetting('daysback')
 
 # Load the directory params
 params = utils.getParams()
 
 # Print directory params for debugging
 for k, v in params.iteritems():
-    print k + ': ' + v
+    pass # print k + ': ' + v
 
 # Parse mode
 mode = utils.parseParamInt(params, 'mode')
@@ -514,6 +683,7 @@ mode = utils.parseParamInt(params, 'mode')
 year = utils.parseParamInt(params, 'year')
 month = utils.parseParamInt(params, 'month')
 day = utils.parseParamInt(params, 'day')
+league = utils.parseParamString(params, 'league')
 team = utils.parseParamString(params, 'team')
 eventId = utils.parseParamString(params, 'eventId')
 feedType = utils.parseParamString(params, 'feedType')
@@ -583,10 +753,12 @@ elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT:
     ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr)
 elif mode == utils.Mode.ONDEMAND_BYTEAM:
     ONDEMAND_BYTEAM(session)
-elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM:
-    ONDEMAND_BYTEAM_TEAM(session, team)
-elif mode == utils.Mode.ONDEMAND_BYTEAM_TEAM_EVENT:
-    ONDEMAND_BYTEAM_TEAM_EVENT(session, eventId, feedType, dateStr)
+elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE:
+    ONDEMAND_BYTEAM_LEAGUE(session,league)
+elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM:
+    ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team)
+elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT:
+    ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr)
 elif mode == utils.Mode.LIVE:
     LIVE(session)
     updateListing = refresh
