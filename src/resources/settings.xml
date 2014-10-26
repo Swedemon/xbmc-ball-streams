@@ -14,7 +14,7 @@
         <setting id="daysback" type="labelenum" label="100038" values="0|1|2|3|5|7|10|Disable" default="1" />
     </category>
     <category label="100033">
-        <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />
+        <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />
         <setting id="resolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
         <setting id="flash" type="bool" label="100017" default="true" />
         <setting id="truelive" type="bool" label="100026" default="true" />
