@@ -5,7 +5,7 @@
         <setting id="password" type="text" label="100002" default="" option="hidden" />
         <setting id="shortnames" type="bool" label="100020" default="true" />
         <setting id="showscores" type="bool" label="100032" default="true" />
-        <setting id="viewmode" type="labelenum" label="100037" values="List|Big List|Default" default="List" />
+        <setting id="viewmode" type="labelenum" label="100037" values="Default|Big List|List" default="Default" />
         <setting id="showfanart" type="bool" label="100034" default="false" />
     </category>
 	<category label="100040">

@@ -19,19 +19,19 @@ msgid "Sorry but a valid stream was not found."
 msgstr ""
 
 msgctxt "#100005"
-msgid "On Demand / Highlights"
+msgid "[ On Demand / Highlights ]"
 msgstr ""
 
 msgctxt "#100006"
-msgid "Live / Coming Soon"
+msgid "[ Live / Coming Soon ]"
 msgstr ""
 
 msgctxt "#100007"
-msgid "By Date"
+msgid "[ By Date ]"
 msgstr ""
 
 msgctxt "#100008"
-msgid "By Team"
+msgid "[ By Team ]"
 msgstr ""
 
 msgctxt "#100009"
@@ -151,7 +151,7 @@ msgid "Event View Mode"
 msgstr ""
 
 msgctxt "#100038"
-msgid "Search # of Days Back for Recent Events"
+msgid "Initial Screen - Search Events # of Days Back"
 msgstr ""
 
 msgctxt "#100039"
