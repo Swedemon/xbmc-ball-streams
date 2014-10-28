@@ -1,3 +1,11 @@
+[b]2.9.4[/b]
+- Fixed: Eliminate condensed games that duplicate highlights (which seems to be all the time)
+- Fixed: Fixed logic to correct highlight building
+
+[b]2.9.3[/b]
+- Added: Favorite team is bolded - defined on website
+- Fixed: Tweaks added to correctly determine status of live games
+
 [b]2.9.2[/b]
 - Added: Highlights supported - display setting included
 - Added: Condensed Games supported - display setting included

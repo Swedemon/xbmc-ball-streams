@@ -59,7 +59,7 @@ msgid "Your premium account membership is inactive."
 msgstr ""
 
 msgctxt "#100015"
-msgid "Refresh"
+msgid "<< Refresh >>"
 msgstr ""
 
 msgctxt "#100016"

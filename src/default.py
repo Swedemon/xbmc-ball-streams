@@ -131,6 +131,8 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
             matchupStr = awayTeam + '* @ ' + homeTeam
         # Build title
         title = event.event + ': ' + matchupStr + dateStr
+        if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
+            title = '[COLOR red][B]' + title + '[/B][/COLOR]'
 
         params = {
             'eventId': event.eventId,
@@ -192,10 +194,17 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
-    if showhighlight:
-        HIGHLIGHTS_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
-    if showcondensed:
-        CONDENSEDGAMES_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+    try:
+        hTeam = onDemandStream.homeTeam
+        dStr = datetime.datetime.strptime(dateStr, ' - %d %b \'%y')
+        if showhighlight and showcondensed:
+            HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, hTeam, dStr)
+        elif showhighlight:
+            HIGHLIGHTS_BYTEAM_TEAMDATE(session, hTeam, dStr)
+        elif showcondensed:
+            CONDENSEDGAMES_BYTEAM_TEAMDATE(session, hTeam, dStr)
+    except Exception as e:
+        print 'Error initializing highlights/condensed: ' + str(e)
 
     # Set view mode
     if viewmode != None:
@@ -227,8 +236,11 @@ def ONDEMAND_BYTEAM(session):
             title = team.league
             utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE, '', params, totalItems, showfanart)
 
+# Method to draw the archives by league screen
+# which scrapes the external source and presents
+# a list of team names
 def ONDEMAND_BYTEAM_LEAGUE(session, league):
-    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league)'
+    print 'ONDEMAND_BYTEAM_LEAGUE(session, league)'
     print 'League: ' + league
 
     # Retrieve the teams
@@ -240,16 +252,20 @@ def ONDEMAND_BYTEAM_LEAGUE(session, league):
     # Add directories for teams
     for team in teams:
         params = {
+            'league': team.league,
             'team': team.name
         }
         title = team.name
+        if team.name == session.favteam:
+            title = '[COLOR red][B]' + title + '[/B][/COLOR]'
         utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM, '', params, totalItems, showfanart)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
 # a list of events for a given team
-def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team):
-    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team)'
+def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team):
+    print 'ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team)'
+    print 'League: ' + league
     print 'Team: ' + team
 
     # Retrieve the team events
@@ -258,6 +274,10 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team):
     totalItems = len(events)
 
     for event in events:
+        # Check league filter
+        if league != None and len(league) > 0 and league != event.event:
+            continue # skip to next event
+
         # Create datetime for string formatting
         parts = event.date.split('/')
         day = int(parts[1])
@@ -291,6 +311,86 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team):
             xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
         except Exception as e:
             print 'Warning:  Unable to set view mode:  ' + str(e)
+
+# Method to draw the highlights screen
+# which scrapes the external source and presents
+# a list of highlights for a given team and/or date
+def HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, team, date):
+    print 'HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, team, date)'
+    print 'Team: ' + str(team)
+    print 'Date: ' + str(date)
+
+    highlights = ballstreams.dateOnDemandHighlights(session, date, team)
+    condensedGames = ballstreams.dateOnDemandHighlights(session, date, team)
+
+    totalItems = len(highlights) + len(condensedGames)
+
+    src = []
+    for highlight in highlights:
+        if team == None or (team == highlight.homeTeam or team == highlight.awayTeam):
+            # Create datetime for string formatting
+            parts = highlight.date.split('/')
+            day = int(parts[1])
+            month = int(parts[0])
+            year = int(parts[2])
+            dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
+            # Build matchup
+            homeTeam = highlight.homeTeam if not shortNames else ballstreams.shortTeamName(highlight.homeTeam, addonPath)
+            awayTeam = highlight.awayTeam if not shortNames else ballstreams.shortTeamName(highlight.awayTeam, addonPath)
+            matchupStr = awayTeam + ' @ ' + homeTeam
+            if awayTeam == '' or homeTeam == '': # Indicates special event
+                matchupStr = awayTeam + homeTeam
+            # Build title
+            title = '[Highlight] ' + highlight.event + ': ' + matchupStr + dateStr
+
+            if highlight.highQualitySrc != None and len(highlight.highQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
+                utils.addLink(title + ' [Hi]', highlight.highQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.highQualitySrc)
+            if highlight.medQualitySrc != None and len(highlight.medQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
+                utils.addLink(title + ' [Med]', highlight.medQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.medQualitySrc)
+            if highlight.lowQualitySrc != None and len(highlight.lowQualitySrc) > 0 and src.count(highlight.lowQualitySrc) == 0:
+                utils.addLink(title + ' [Lo]', highlight.lowQualitySrc, '', totalItems, showfanart)
+                src.append(highlight.lowQualitySrc)
+            if highlight.homeSrc != None and len(highlight.homeSrc) > 0 and src.count(highlight.homeSrc) == 0:
+                utils.addLink(title + ' [Home]', highlight.homeSrc, '', totalItems, showfanart)
+                src.append(highlight.homeSrc)
+            if highlight.awaySrc != None and len(highlight.awaySrc) > 0 and src.count(highlight.awaySrc) == 0:
+                utils.addLink(title + ' [Away]', highlight.awaySrc, '', totalItems, showfanart)
+                src.append(highlight.awaySrc)
+
+    for condensedGame in condensedGames:
+        if team == None or (team == condensedGame.homeTeam or team == condensedGame.awayTeam):
+            # Create datetime for string formatting
+            parts = condensedGame.date.split('/')
+            day = int(parts[1])
+            month = int(parts[0])
+            year = int(parts[2])
+            dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
+            # Build matchup
+            homeTeam = condensedGame.homeTeam if not shortNames else hockeystreams.shortTeamName(condensedGame.homeTeam, addonPath)
+            awayTeam = condensedGame.awayTeam if not shortNames else hockeystreams.shortTeamName(condensedGame.awayTeam, addonPath)
+            matchupStr = awayTeam + ' @ ' + homeTeam
+            if awayTeam == '' or homeTeam == '': # Indicates special event
+                matchupStr = awayTeam + homeTeam
+            # Build title
+            title = '[Condensed] ' + condensedGame.event + ': ' + matchupStr + dateStr
+
+            if condensedGame.highQualitySrc != None and len(condensedGame.highQualitySrc) > 0 and src.count(condensedGame.medQualitySrc) == 0:
+                utils.addLink(title + ' [Hi]', condensedGame.highQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.highQualitySrc)
+            if condensedGame.medQualitySrc != None and len(condensedGame.medQualitySrc) > 0 and src.count(condensedGame.medQualitySrc) == 0:
+                utils.addLink(title + ' [Med]', condensedGame.medQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.medQualitySrc)
+            if condensedGame.lowQualitySrc != None and len(condensedGame.lowQualitySrc) > 0 and src.count(condensedGame.lowQualitySrc) == 0:
+                utils.addLink(title + ' [Lo]', condensedGame.lowQualitySrc, '', totalItems, showfanart)
+                src.append(condensedGame.lowQualitySrc)
+            if condensedGame.homeSrc != None and len(condensedGame.homeSrc) > 0 and src.count(condensedGame.homeSrc) == 0:
+                utils.addLink(title + ' [Home]', condensedGame.homeSrc, '', totalItems, showfanart)
+                src.append(condensedGame.homeSrc)
+            if condensedGame.awaySrc != None and len(condensedGame.awaySrc) > 0 and src.count(condensedGame.awaySrc) == 0:
+                utils.addLink(title + ' [Away]', condensedGame.awaySrc, '', totalItems, showfanart)
+                src.append(condensedGame.awaySrc)
 
 # Method to draw the highlights screen
 # which scrapes the external source and presents
@@ -430,10 +530,17 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
-    if showhighlight:
-        HIGHLIGHTS_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
-    if showcondensed:
-        CONDENSEDGAMES_BYTEAM_TEAMDATE(session, onDemandStream.homeTeam, datetime.datetime.strptime(dateStr, ' - %d %b \'%y'))
+    try:
+        hTeam = onDemandStream.homeTeam
+        dStr = datetime.datetime.strptime(dateStr, ' - %d %b \'%y')
+        if showhighlight and showcondensed:
+            HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, hTeam, dStr)
+        elif showhighlight:
+            HIGHLIGHTS_BYTEAM_TEAMDATE(session, hTeam, dStr)
+        elif showcondensed:
+            CONDENSEDGAMES_BYTEAM_TEAMDATE(session, hTeam, dStr)
+    except Exception as e:
+        print 'Error initializing highlights/condensed: ' + str(e)
 
     # Set view mode
     if viewmode != None:
@@ -455,9 +562,9 @@ def LIVE(session):
 
     for event in events:
         # Build prefix
-        prefix = '[LIVE] '
+        prefix = '[COLOR blue][B][LIVE][/B][/COLOR] '
         if event.isFuture:
-            prefix = '[Coming Soon] '
+            prefix = '[COLOR lightblue][Coming Soon][/COLOR] '
         elif event.isFinal:
             prefix = '[Final] '
         # Build matchup
@@ -479,13 +586,16 @@ def LIVE(session):
         # Build score
         homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
         awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
-        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture and periodStr != '' else ''
+        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture else ''
         # Build start time
         startTimeStr = ''
         if periodStr == '':
             startTimeStr = ' - ' + event.startTime
         # Build title
         title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr
+        if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
+            title = '[COLOR red][B]' + title + '[/B][/COLOR]'
+
         if event.isFinal:
             now = ballstreams.adjustedDateTime()
             params = {
@@ -534,7 +644,7 @@ def LIVE_EVENT(session, eventId):
         return None
 
     # Build prefix
-    prefix = '[LIVE] '
+    prefix = '[COLOR blue][B][LIVE][/B][/COLOR] '
     # Build matchup
     homeTeam = liveStream.homeTeam if not shortNames else ballstreams.shortTeamName(liveStream.homeTeam, addonPath)
     awayTeam = liveStream.awayTeam if not shortNames else ballstreams.shortTeamName(liveStream.awayTeam, addonPath)
@@ -756,7 +866,7 @@ elif mode == utils.Mode.ONDEMAND_BYTEAM:
 elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE:
     ONDEMAND_BYTEAM_LEAGUE(session,league)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM:
-    ONDEMAND_BYTEAM_LEAGUE_TEAM(session, team)
+    ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT:
     ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr)
 elif mode == utils.Mode.LIVE:

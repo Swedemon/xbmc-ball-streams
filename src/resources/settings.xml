@@ -3,6 +3,7 @@
 	<category label="100028">
         <setting id="username" type="text" label="100001" default="" />
         <setting id="password" type="text" label="100002" default="" option="hidden" />
+        <setting type="sep" />
         <setting id="shortnames" type="bool" label="100020" default="true" />
         <setting id="showscores" type="bool" label="100032" default="true" />
         <setting id="viewmode" type="labelenum" label="100037" values="Default|Big List|List" default="Default" />
@@ -10,8 +11,8 @@
     </category>
 	<category label="100040">
         <setting id="showhighlight" type="bool" label="100036" default="true" />
-        <setting id="showcondensed" type="bool" label="100039" default="true" />
-        <setting id="daysback" type="labelenum" label="100038" values="0|1|2|3|5|7|10|Disable" default="1" />
+        <setting id="showcondensed" type="bool" label="100039" default="false" />
+        <setting id="daysback" type="labelenum" label="100038" values="0|1|2|3|5|7|Disable" default="1" />
     </category>
     <category label="100033">
         <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />

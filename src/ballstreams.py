@@ -37,12 +37,30 @@ class LiveEvent():
         self.homeScore = homeScore
         self.awayTeam = awayTeam
         self.awayScore = awayScore
-        self.startTime = startTime
+        self.startTime = startTime if startTime != None else ''
         self.period = period if period != None else ''
         self.isPlaying = isPlaying
         self.feedType = feedType
-        self.isFuture = self.period == '' and not self.isPlaying
-        self.isFinal = len(self.period)>0 and not self.isPlaying
+        # Special logic needed to define isFuture and isFinal parameters
+        if self.isPlaying:
+            self.isFuture = False
+            self.isFinal = False
+        elif self.homeScore != '0' or self.awayScore != '0':
+            self.isFuture = False
+            self.isFinal = True
+        elif self.period == '':
+            self.isFuture = True
+            self.isFinal = False
+        elif self.period != self.startTime:
+            self.isFuture = False
+            self.isFinal = True
+        else:  #self.period == self.startTime and score is 0-0 (we're stuck)
+            # this is not full-proof but is a best guess at the moment
+            nowStr = datetime.datetime.now().strftime('%I:%m %p').rjust(8, '0') # if system time-zone differs from account time-zone breaks this scenario
+            startStr = startTime[:8].strip().rjust(8, '0')
+            isGameInFuture = nowStr < startStr #01:00 AM < 07:00 PM - this breaks this scenario
+            self.isFuture = isGameInFuture
+            self.isFinal = not isGameInFuture
 
     # Overrides this classes string value
     def __str__(self):
