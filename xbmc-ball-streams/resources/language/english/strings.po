@@ -1,0 +1,163 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+
+msgctxt "#100001"
+msgid "Username"
+msgstr ""
+
+msgctxt "#100002"
+msgid "Password"
+msgstr ""
+
+msgctxt "#100003"
+msgid "No Stream"
+msgstr ""
+
+msgctxt "#100004"
+msgid "Sorry but a valid stream was not found."
+msgstr ""
+
+msgctxt "#100005"
+msgid "[ On Demand / Highlights ]"
+msgstr ""
+
+msgctxt "#100006"
+msgid "[ Live / Coming Soon ]"
+msgstr ""
+
+msgctxt "#100007"
+msgid "[ By Date ]"
+msgstr ""
+
+msgctxt "#100008"
+msgid "[ By Team ]"
+msgstr ""
+
+msgctxt "#100009"
+msgid "No Stream"
+msgstr ""
+
+msgctxt "#100010"
+msgid "LIVE"
+msgstr ""
+
+msgctxt "#100011"
+msgid "Login Failed"
+msgstr ""
+
+msgctxt "#100012"
+msgid "Account login failed. Please check settings."
+msgstr ""
+
+msgctxt "#100013"
+msgid "Membership Inactive"
+msgstr ""
+
+msgctxt "#100014"
+msgid "Your premium account membership is inactive."
+msgstr ""
+
+msgctxt "#100015"
+msgid "<< Refresh >>"
+msgstr ""
+
+msgctxt "#100016"
+msgid "Enable iStreams (mobile)"
+msgstr ""
+
+msgctxt "#100017"
+msgid "Enable Flash Streams"
+msgstr ""
+
+msgctxt "#100018"
+msgid "IP Exception Failed"
+msgstr ""
+
+msgctxt "#100019"
+msgid "You can try creating an IP Exception via the website.  If problem persists then reset password."
+msgstr ""
+
+msgctxt "#100020"
+msgid "Short Team Names"
+msgstr ""
+
+msgctxt "#100021"
+msgid "Multiple Users Detected"
+msgstr ""
+
+msgctxt "#100022"
+msgid "Someone may be using your account or you"
+msgstr ""
+
+msgctxt "#100023"
+msgid "forgot to close a stream on another device."
+msgstr ""
+
+msgctxt "#100024"
+msgid "For help contact ballstreams.com"
+msgstr ""
+
+msgctxt "#100025"
+msgid "Location"
+msgstr ""
+
+msgctxt "#100026"
+msgid "Enable TrueLive Streams (rtmp)"
+msgstr ""
+
+msgctxt "#100027"
+msgid "Enable WMV Streams"
+msgstr ""
+
+msgctxt "#100028"
+msgid "General Settings"
+msgstr ""
+
+msgctxt "#100029"
+msgid "Coming Soon"
+msgstr ""
+
+msgctxt "#100030"
+msgid "Final"
+msgstr ""
+
+msgctxt "#100031"
+msgid "Resolution"
+msgstr ""
+
+msgctxt "#100032"
+msgid "Display Live Scores"
+msgstr ""
+
+msgctxt "#100033"
+msgid "Stream Settings"
+msgstr ""
+
+msgctxt "#100034"
+msgid "Display Fanart (requires restart)"
+msgstr ""
+
+msgctxt "#100035"
+msgid "Enable DVR Streams (no rewind functionality)"
+msgstr ""
+
+msgctxt "#100036"
+msgid "Display Highlights"
+msgstr ""
+
+msgctxt "#100037"
+msgid "Event View Mode"
+msgstr ""
+
+msgctxt "#100038"
+msgid "Initial Screen - Search Events # of Days Back"
+msgstr ""
+
+msgctxt "#100039"
+msgid "Display Condensed"
+msgstr ""
+
+msgctxt "#100040"
+msgid "OnDemand Settings"
+msgstr ""
