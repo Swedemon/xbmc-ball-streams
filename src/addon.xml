@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.xbmc-ball-streams" name="XBMC Ball Streams" version="2.9.1" provider-name="Craig McNicholas, Andrew Wise">
+<addon id="plugin.video.xbmc-ball-streams" name="XBMC Ball Streams" version="2.9.4" provider-name="Craig McNicholas, Andrew Wise">
 	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
+		<import addon="xbmc.python" version="2.0" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
 		<provides>video</provides>
