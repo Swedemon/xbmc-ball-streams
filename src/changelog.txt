@@ -1,3 +1,11 @@
+[b]2.9.5[/b]
+- Added: Custom date search to on-demand section
+- Added: All teams option added under by team category
+- Added: OnDemand team filter includes similar events, i.e. NHL includes NHL preseason
+- Added: Progressive stream support added - expert setting in beta
+- Changed: View Mode includes thumbnail and extends to all directories
+- Fixed: Removed league filter within on-demand byteam event filter where it didn't make sense
+
 [b]2.9.4[/b]
 - Fixed: Eliminate condensed games that duplicate highlights (which seems to be all the time)
 - Fixed: Fixed logic to correct highlight building

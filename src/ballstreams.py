@@ -1,4 +1,4 @@
-import urllib, urllib2, datetime, json, os
+import urllib, urllib2, datetime, time, json, os
 
 # xbmc-ball-streams
 # author: craig mcnicholas, andrew wise (since v2.8.2)
@@ -1069,6 +1069,24 @@ def adjustedDateTime():
 def getRecentDateTime(daysBack = 0):
     now = datetime.datetime.now()
     return now - datetime.timedelta(daysBack)
+
+# Derive the progressive URL based on the given URL
+def deriveProgressiveUrl(streamUrl, baseUrl):
+    if streamUrl == None:
+        return None
+    sUrl = streamUrl.replace('m3u8','mp4')
+    parts = sUrl.split('/')
+    #progressiveUrl = 'http://198.23.71.68/vod5/'
+    #progressiveUrl = 'http://159.8.16.25/vod5/'
+    progressiveUrl = baseUrl
+    i = 0
+    for part in parts:
+        if i == len(parts)-1:
+            progressiveUrl += part
+        elif i > 4:
+            progressiveUrl += part + '/'
+        i += 1
+    return progressiveUrl
 
 # Method to setup a request object to ballstreams
 # @param url the url to setup the request to
