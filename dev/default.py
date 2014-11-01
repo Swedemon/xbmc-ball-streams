@@ -17,17 +17,31 @@ addonPath = addon.getAddonInfo('path')
 # Method to draw the home screen
 def HOME():
     print 'HOME()'
-    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, showfanart)
-    utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, 2, showfanart)
+    utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, 2, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives screen
 def ONDEMAND():
     print 'ONDEMAND()'
-    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, showfanart)
-    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, showfanart)
+    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, 2, showfanart)
+    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, 2, showfanart)
     
     # Append Recent day events
     ONDEMAND_RECENT(session)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -61,6 +75,16 @@ def ONDEMAND_BYDATE(session):
         }
         utils.addDir(date.strftime('%B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH, '', params, totalItems, showfanart)
 
+    # Add custom date directory
+    utils.addDir('[ Custom Date ]', utils.Mode.ONDEMAND_BYDATE_CUSTOM, '', None, 2, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
 # Method to draw the on-demand by date screen
 # which scrapes the external source and presents
 # a list of days for a given year and month of archives
@@ -91,6 +115,13 @@ def ONDEMAND_BYDATE_YEARMONTH(session, year, month):
             'day': str(day)
         }
         utils.addDir(date.strftime('%A %d %B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -160,7 +191,7 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     # Build streams
     onDemandStream = ballstreams.onDemandEventStreams(session, eventId, location)
 
-    totalItems = 6 # max possible
+    totalItems = 10 # max possible
 
     if onDemandStream == None or onDemandStream.streamSet == None:
         return None
@@ -187,9 +218,15 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
         suffix = ' [iStream SD]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None:
+    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
         suffix = ' [iStream]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
+    if progressiveUrl != None and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
+        suffix = ' [Progressive HD]'
+        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.hd'],progressiveUrl), '', totalItems, showfanart)
+    if progressiveUrl != None and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
+        suffix = ' [Progressive SD]'
+        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'),progressiveUrl), '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -213,6 +250,60 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         except Exception as e:
             print 'Warning:  Unable to set view mode:  ' + str(e)
 
+# Method to draw a list of recent month/years
+# to custom search on-demand archives
+def ONDEMAND_BYDATE_CUSTOM(session):
+    print 'ONDEMAND_BYDATE_CUSTOM(session)'
+
+    a = datetime.datetime.today()
+    daysBack = 800 # Could be an addon setting
+    dateStrList = []
+    for x in range (0, daysBack):
+        nextDate = a - datetime.timedelta(days = x)
+        monthYear = nextDate.strftime('%B %Y')
+        if (dateStrList.count(monthYear)==0):
+            dateStrList.append(monthYear)
+            params = {
+                'year': str(nextDate.year),
+                'month': str(nextDate.month)
+            }
+            utils.addDir(monthYear, utils.Mode.ONDEMAND_BYDATE_CUSTOM_YEARMONTH, '', params, 17, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
+# Method to draw a list of days for a given month/year
+# to custom search on-demand archives
+def ONDEMAND_BYDATE_CUSTOM_YEARMONTH(session, year, month):
+    print 'ONDEMAND_BYDATE_CUSTOM_YEARMONTH(session, year, month)'
+    print 'Year: ' + str(year)
+    print 'Month: ' + str(month)
+
+    currentDay = datetime.date.today()
+    nextMonthDay = datetime.date(year, month, 1) + datetime.timedelta(days = 31)
+    lastMonthDay = datetime.date(nextMonthDay.year, nextMonthDay.month, 1) - datetime.timedelta(days = 1)
+    daysBack = int(lastMonthDay.day)
+    for x in range (0, daysBack):
+        nextDate = lastMonthDay - datetime.timedelta(days = x)
+        if nextDate <= currentDay:
+            params = {
+                'year': str(nextDate.year),
+                'month': str(nextDate.month),
+                'day': str(nextDate.day)
+            }
+            utils.addDir(nextDate.strftime('%A %d %B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, daysBack, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
 # a list of team names (or potentially events)
@@ -224,6 +315,8 @@ def ONDEMAND_BYTEAM(session):
 
     # Count total number of items for ui
     totalItems = len(teams)
+    
+    utils.addDir('[ All Teams ]', utils.Mode.ONDEMAND_BYTEAM_LEAGUE, '', None, totalItems, showfanart)
 
     # Add directories for teams
     league = []
@@ -236,12 +329,19 @@ def ONDEMAND_BYTEAM(session):
             title = team.league
             utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE, '', params, totalItems, showfanart)
 
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
+
 # Method to draw the archives by league screen
 # which scrapes the external source and presents
 # a list of team names
 def ONDEMAND_BYTEAM_LEAGUE(session, league):
     print 'ONDEMAND_BYTEAM_LEAGUE(session, league)'
-    print 'League: ' + league
+    print 'League: ' + str(league)
 
     # Retrieve the teams
     teams = ballstreams.teams(session, league)
@@ -256,9 +356,18 @@ def ONDEMAND_BYTEAM_LEAGUE(session, league):
             'team': team.name
         }
         title = team.name
+        if league == None and team.league != None:
+            title = team.league + ': ' + team.name
         if team.name == session.favteam:
             title = '[COLOR red][B]' + title + '[/B][/COLOR]'
         utils.addDir(title, utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM, '', params, totalItems, showfanart)
+
+    # Set view mode
+    if viewmode != None:
+        try:
+            xbmc.executebuiltin('Container.SetViewMode(' + viewmode + ')')
+        except Exception as e:
+            print 'Warning:  Unable to set view mode:  ' + str(e)
 
 # Method to draw the archives by team screen
 # which scrapes the external source and presents
@@ -275,8 +384,9 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team):
 
     for event in events:
         # Check league filter
-        if league != None and len(league) > 0 and league != event.event:
-            continue # skip to next event
+        if league != None and len(league) > 0 and event.event != None and len(event.event) > 0:
+            if not event.event.startswith(league):
+                continue # skip to next event
 
         # Create datetime for string formatting
         parts = event.date.split('/')
@@ -523,9 +633,15 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
         suffix = ' [iStream SD]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None:
+    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
         suffix = ' [iStream]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
+    if progressiveUrl != None and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
+        suffix = ' [Progressive HD]'
+        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.hd'],progressiveUrl), '', totalItems, showfanart)
+    if progressiveUrl != None and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
+        suffix = ' [Progressive SD]'
+        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'),progressiveUrl), '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -594,7 +710,7 @@ def LIVE(session):
         # Build title
         title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr
         if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
-            title = '[COLOR red][B]' + title + '[/B][/COLOR]'
+            title = prefix + '[COLOR red][B]' + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + '[/B][/COLOR]'
 
         if event.isFinal:
             now = ballstreams.adjustedDateTime()
@@ -638,7 +754,7 @@ def LIVE_EVENT(session, eventId):
     # Build streams
     liveStream = ballstreams.liveEventStreams(session, eventId, location)
 
-    totalItems = 11 # max possible
+    totalItems = 15 # max possible
 
     if liveStream == None or liveStream.streamSet == None:
         return None
@@ -664,7 +780,7 @@ def LIVE_EVENT(session, eventId):
     # Build score
     homeScore = liveStream.homeScore if liveStream.homeScore != None and len(liveStream.homeScore)>0 else '0'
     awayScore = liveStream.awayScore if liveStream.awayScore != None and len(liveStream.awayScore)>0 else '0'
-    scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and periodStr != '' else ''
+    scoreStr = ' - ' + awayScore + '-' + homeScore if showscores else ''
     # Build start time
     startTimeStr = ''
     if periodStr == '':
@@ -760,6 +876,8 @@ if viewmode != None and viewmode == 'Big List':
     viewmode = '51'
 elif viewmode != None and viewmode == 'List':
     viewmode = '50'
+elif viewmode != None and viewmode == 'Thumbnail':
+    viewmode = '500'
 else: # Default
     viewmode = None
 
@@ -768,8 +886,7 @@ istream = addon.getSetting('istream')
 istream = istream != None and istream.lower() == 'true'
 flash = addon.getSetting('flash')
 flash = flash != None and flash.lower() == 'true'
-wmv = addon.getSetting('wmv')
-wmv = wmv != None and wmv.lower() == 'true'
+wmv = 'True'
 truelive = addon.getSetting('truelive')
 truelive = truelive != None and truelive.lower() == 'true'
 dvr = addon.getSetting('dvr')
@@ -778,6 +895,29 @@ location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
 daysback = addon.getSetting('daysback')
+progressiveUrl = addon.getSetting('progressive')
+if progressiveUrl == 'Disabled':
+    progressiveUrl = None
+elif progressiveUrl == 'Asia':
+    progressiveUrl = 'http://119.81.135.3/vod5/'
+elif progressiveUrl == 'Australia':
+    progressiveUrl = 'http://168.1.75.9/vod5/'
+elif progressiveUrl == 'Europe':
+    progressiveUrl = 'http://159.8.16.17/vod5/'
+elif progressiveUrl == 'North America - Central':
+    progressiveUrl = 'http://198.23.71.68/vod5/'
+elif progressiveUrl == 'North America - East':
+    progressiveUrl = 'http://198.23.71.68/vod5/'
+elif progressiveUrl == 'North America - East Canada':
+    progressiveUrl = 'http://198.23.71.68/vod5/'
+elif progressiveUrl == 'North America - West':
+    progressiveUrl = 'http://198.23.71.68/vod5/'
+elif progressiveUrl == 'Custom':
+    progressiveCustomUrl = addon.getSetting('progressiveCustomUrl')
+    if progressiveCustomUrl == None:
+        progressiveUrl = None
+    else:
+        progressiveUrl = progressiveCustomUrl
 
 # Load the directory params
 params = utils.getParams()
@@ -861,6 +1001,10 @@ elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY:
     ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)
 elif mode == utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT:
     ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr)
+elif mode == utils.Mode.ONDEMAND_BYDATE_CUSTOM:
+    ONDEMAND_BYDATE_CUSTOM(session)
+elif mode == utils.Mode.ONDEMAND_BYDATE_CUSTOM_YEARMONTH:
+    ONDEMAND_BYDATE_CUSTOM_YEARMONTH(session, year, month)
 elif mode == utils.Mode.ONDEMAND_BYTEAM:
     ONDEMAND_BYTEAM(session)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE:

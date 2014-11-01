@@ -147,7 +147,7 @@ msgid "Display Highlights"
 msgstr ""
 
 msgctxt "#100037"
-msgid "Event View Mode"
+msgid "View Mode"
 msgstr ""
 
 msgctxt "#100038"
