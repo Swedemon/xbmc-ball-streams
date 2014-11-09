@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="repository.xbmc-ball-streams" name="Swedemon" version="0.0.1" provider-name="Swedemon">
     <extension point="xbmc.addon.repository" name="Swedemon">
-        <info compressed="false">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/repo/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/repo/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/repo</datadir>
+        <info compressed="false">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads</datadir>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary>Install XBMC Addons</summary>
