@@ -3,7 +3,7 @@
 Steps to install xbmc-ball-streams addon:
 
 1. Browse to the download location: 
-    > https://github.com/Swedemon/xbmc-ball-streams/tree/master/downloads
+    > https://github.com/Swedemon/xbmc-ball-streams/tree/master/downloads/plugin.video.xbmc-ball-streams/
 
 2. Left click the latest zip file that matches your version of Kodi (XBMC).
     > Frodo  = v12
