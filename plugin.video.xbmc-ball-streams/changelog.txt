@@ -1,3 +1,8 @@
+[b]2.9.6[/b]
+- Changed: Eliminate redundant iStream when duplicates HD or SD stream
+- Added: Refresh added at the top when several live events displayed
+- Fixed: Standardized plugin directory name
+
 [b]2.9.5[/b]
 - Added: Custom date search to on-demand section
 - Added: All teams option added under by team category

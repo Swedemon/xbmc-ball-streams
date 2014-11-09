@@ -21,7 +21,7 @@
         <setting id="truelive" type="bool" label="100026" default="true" />
         <setting id="istream" type="bool" label="100016" default="true" />
         <setting id="dvr" type="bool" label="100035" default="false" />
-        <setting id="progressive" type="labelenum" label="Enable Progressive (beta)" values="Disabled|Custom|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Disabled" />
+        <setting id="progressive" type="labelenum" label="Enable Progressive (mp4 - beta)" values="Disabled|Custom|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Disabled" />
         <setting id="progressiveCustomUrl" type="text" label="    Progressive URL" enable="eq(-1,1)"  default="http://198.23.71.68/vod5/" />
     </category>
 </settings>

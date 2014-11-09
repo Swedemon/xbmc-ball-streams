@@ -1076,8 +1076,6 @@ def deriveProgressiveUrl(streamUrl, baseUrl):
         return None
     sUrl = streamUrl.replace('m3u8','mp4')
     parts = sUrl.split('/')
-    #progressiveUrl = 'http://198.23.71.68/vod5/'
-    #progressiveUrl = 'http://159.8.16.25/vod5/'
     progressiveUrl = baseUrl
     i = 0
     for part in parts:
