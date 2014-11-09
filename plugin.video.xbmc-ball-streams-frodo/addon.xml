@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.xbmc-ball-streams-frodo" name="XBMC Ball Streams" version="2.9.6" provider-name="Craig McNicholas, Andrew Wise">
+	<requires>
+		<import addon="xbmc.python" version="2.0" />
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.repository" name="XBMC Ball Streams Autoupdate Repository">
+        	<info compressed="false">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/addons.xml</info>
+        	<checksum>https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/addons.xml.md5</checksum>
+        	<datadir zip="true">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Video plugin for ballstreams.com</summary>
+		<description>This Add-on allows access to ballstreams.com streams, you will need a premium account at ballstreams.com for this Add-on to function</description>
+		<platform>all</platform>
+		<license>GNU GPL v3</license>
+		<disclaimer>Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
+	</extension>
+</addon>
