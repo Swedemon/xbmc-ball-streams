@@ -1,0 +1,97 @@
+#!/bin/bash
+
+if [ ! -e build ]
+then
+  echo
+  echo "Ensure you run this file from the SAME folder as where it was"
+  echo "installed, otherwise it will have problems running the scripts."
+  echo "After you 'cd' to the correct folder, start the build with "
+  echo "the ./build command, NOT with any other command or method!"
+  exit 0
+fi
+
+if [ -d ./source/repository.YOUR-REPO-ID ]
+then
+  clear
+  echo
+  echo "Welcome to this simple XBMC repository builder."
+  echo "Before we begin, we need to quickly setup your repository..."
+  echo
+  echo "When we are finished, you can easily keep your repo up-to-date"
+  echo "by executing this ./build script from the command line."
+  echo
+
+### Name repository
+  oldyourname="YOUR-NAME"
+  oldrepoid="YOUR-REPO-ID"
+  oldurl="https://REPO-ADDRESS/"
+
+  while true
+    do
+    echo 
+    echo "====================================="
+    echo " What is your name fellow developer? "
+    echo "====================================="
+    echo
+    echo
+    echo -n '> Name: '
+    read yourname
+
+    echo 
+    echo "=========================="
+    echo " Set your repository's ID "
+    echo "=========================="
+    echo 
+    echo 'NOTE: The name cannot have any spaces!'
+    echo 'Example: "my-repo"'
+    echo
+    echo
+    echo -n '> Enter the ID of your XBMC Repository: '
+    read repoid
+
+    echo 
+    echo "========================="
+    echo " Link of your repository "
+    echo "========================="
+    echo 
+    echo 'Example: "https://REPO-ADDRESS/"'
+    echo 'NOTE: This link must end with a "/"'
+    echo
+    echo
+    echo -n "> Enter the URL of your repository: "
+    read url
+
+    echo 
+    echo "============================="
+    echo " !!! CHECK THESE DETAILS !!! "
+    echo "============================="
+    echo 
+    echo "Is the following information correct?"
+    echo 
+    echo "   Provider Name: '$yourname'"
+    echo
+    echo "   Name of Repository: '$repoid'"
+    echo
+    echo "   Location of Repository: '$url'"
+    echo 
+
+    read -p "Is this correct?(y/n)" AN
+    case "$AN" in 
+      y|Y ) echo; echo "Creating Repository..."; echo; mv ./source/repository.$oldrepoid ./source/repository.$repoid; sed -i "s_"$oldrepoid"_"$repoid"_g" ./source/repository.$repoid/addon.xml; sed -i "s_"$oldurl"_"$url"_g" ./source/repository.$repoid/addon.xml; sed -i "s_"$oldyourname"_"$yourname"_g" ./source/repository.$repoid/addon.xml; rm .firstrun; sleep 1; break;;
+      n|N ) echo; echo "Please fix the errors..."; sleep 1; echo;;
+    * ) echo "Is this okay?(y/n)";;
+  esac
+  done
+
+  exit 0
+  echo
+fi
+
+
+
+cd ./source
+clear
+echo "Generating Repo..."
+echo
+python ./generate_repository
+cd ..

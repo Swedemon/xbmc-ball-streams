@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+#import addons_xml_generator as generate
+import os
+import shutil
+import time
+import subprocess
+
+import glob
+import zipfile
+import xml.etree.ElementTree as ET
+
+def zipdir(path, zip):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            zip.write(os.path.join(root, file))
+
+def buildrepo(f):
+    print "Checking for location: "+f
+    #folder
+    d = os.path.dirname(f)
+    if not os.path.exists(d):
+        os.makedirs(d)
+	print "Not Found! Creating: "+d
+
+print "-----------------------------------------------------------------------------"
+print "------------------------------------START------------------------------------"
+print "-----------------------------------------------------------------------------"
+
+subprocess.Popen("./addons_xml_generator.py", shell=True, close_fds=True)
+addonxml      = "./addons.xml"
+addonxmlmd5   = "./addons.xml.md5"
+
+for x in os.listdir('./'):
+    if (os.path.isfile(x)) or ('.git' in x):
+        #print("SKIPPING: "+x)
+        pass
+    else: 
+        print("Add-on Found: "+x)
+        #### Make VARS:
+        dest_dir = "../downloads/"+x+"/"
+	tree = ET.parse('./'+x+'/addon.xml')
+	root = tree.getroot()
+	version = root.get('version')
+        print "Version: "+version
+        #### DO:
+	buildrepo(dest_dir+"*")
+        for file in glob.glob('./'+x+'/*changelog.txt'):
+            print 'Copying: '+file+' >>>> '+dest_dir+'changelog-'+version+'.txt'
+            shutil.copy(file, dest_dir+'changelog-'+version+'.txt')
+        for file in glob.glob('./'+x+'/*icon.*'):
+            print 'Copying: '+file+' >>>> '+dest_dir+'icon.png'
+            shutil.copy(file, dest_dir)
+        for file in glob.glob('./'+x+'/*fanart.*'):
+            print 'Copying: '+file+' >>>> '+dest_dir+'fanart.jpg'
+            shutil.copy(file, dest_dir)
+        print("Compressing "+x+'-'+version+'.zip...')
+        zipf = zipfile.ZipFile('../downloads/'+x+'/'+x+'-'+version+'.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipdir(x, zipf)
+        zipf.close()
+        print("Add-on '"+x+"' Successfully Processed")
+        print("")
+
+shutil.copy(addonxml, "../downloads/")
+shutil.copy(addonxmlmd5, "../downloads/")
+
+#add version numbers to zip and changelog
+
+
+print "---------------------------------------------------------------------------"
+print "------------------------------------END------------------------------------"
+print "---------------------------------------------------------------------------"
+
