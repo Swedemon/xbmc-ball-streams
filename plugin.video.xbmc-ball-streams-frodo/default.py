@@ -8,7 +8,7 @@ import os, datetime, threading, random, time
 
 # deals with a bug where errors are thrown 
 # if data directory does not exist.
-addonId = 'plugin.video.xbmc-ball-streams'
+addonId = 'plugin.video.xbmc-ball-streams-frodo'
 dataPath = 'special://profile/addon_data/' + addonId
 if not os.path.exists: os.makedirs(dataPath)
 addon = xbmcaddon.Addon(id = addonId)
