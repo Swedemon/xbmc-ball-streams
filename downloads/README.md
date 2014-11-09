@@ -1,5 +1,5 @@
-XBMC BALL STREAMS
-===================
+DOWNLOAD XBMC BALL STREAMS HERE
+===============================
 
 BallStreams.com offer a high quality low cost service for watching basketball including NBA, FIBA and NCAA March Madness. This plugin helps to integrate BallStreams.com into XBMC.
 
