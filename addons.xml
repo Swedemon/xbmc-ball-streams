@@ -1,10 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<addons>
 <addon id="plugin.video.xbmc-ball-streams" name="XBMC Ball Streams" version="2.9.5" provider-name="Craig McNicholas, Andrew Wise">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">
 		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.repository" name="XBMC Ball Streams Autoupdate Repository">
+        	<info compressed="false">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/addons.xml</info>
+        	<checksum>https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/addons.xml.md5</checksum>
+        	<datadir zip="true">https://raw.githubusercontent.com/Swedemon/xbmc-ball-streams/master/downloads/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary>Video plugin for ballstreams.com</summary>
@@ -14,3 +20,4 @@
 		<disclaimer>Some parts of this addon may not be legal in your country of residence - please check with your local laws before installing.</disclaimer>
 	</extension>
 </addon>
+</addons>
