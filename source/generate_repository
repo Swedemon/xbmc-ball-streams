@@ -38,7 +38,7 @@ for x in os.listdir('./'):
     else: 
         print("Add-on Found: "+x)
         #### Make VARS:
-        dest_dir = "../downloads/"+x+"/"
+        dest_dir = "../repo/"+x+"/"
 	tree = ET.parse('./'+x+'/addon.xml')
 	root = tree.getroot()
 	version = root.get('version')
@@ -55,16 +55,21 @@ for x in os.listdir('./'):
             print 'Copying: '+file+' >>>> '+dest_dir+'fanart.jpg'
             shutil.copy(file, dest_dir)
         print("Compressing "+x+'-'+version+'.zip...')
-        zipf = zipfile.ZipFile('../downloads/'+x+'/'+x+'-'+version+'.zip', 'w', zipfile.ZIP_DEFLATED)
+        zipf = zipfile.ZipFile('../repo/'+x+'/'+x+'-'+version+'.zip', 'w', zipfile.ZIP_DEFLATED)
         zipdir(x, zipf)
         zipf.close()
+        print("Making copy of "+x+'-'+version+'.zip in Downloads DIR...')
+        shutil.copy('../repo/'+x+'/'+x+'-'+version+'.zip', "../downloads/")
         print("Add-on '"+x+"' Successfully Processed")
         print("")
 
-shutil.copy(addonxml, "../downloads/")
-shutil.copy(addonxmlmd5, "../downloads/")
+shutil.copy(addonxml, "../repo/")
+shutil.copy(addonxmlmd5, "../repo/")
 
-#add version numbers to zip and changelog
+#add version numbers to Readme.md
+print('Update links in "downloads/README.md"')
+newreadme = "sed -i 's:-.\..\..\.zip:-'"+version+"'.zip:g' ../downloads/README.md"
+subprocess.Popen(newreadme, shell=True, close_fds=True)
 
 
 print "---------------------------------------------------------------------------"
