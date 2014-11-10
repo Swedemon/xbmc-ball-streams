@@ -93,5 +93,6 @@ cd ./source
 clear
 echo "Generating Repo..."
 echo
-python ./generate_repository
+"C:/Program1/Python27/python.exe" ./generate_repository
+#python ./generate_repository
 cd ..
