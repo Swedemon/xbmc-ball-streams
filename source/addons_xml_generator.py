@@ -6,7 +6,6 @@
 import os
 import md5
 
-
 class Generator:
     """
         Generates a new addons.xml file from each addons addon.xml file
@@ -69,7 +68,6 @@ class Generator:
         except Exception, e:
             # oops
             print "An error occurred saving %s file!\n%s" % ( file, e, )
-
 
 if ( __name__ == "__main__" ):
     # start

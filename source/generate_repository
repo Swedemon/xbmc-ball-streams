@@ -27,7 +27,7 @@ print "-------------------------------------------------------------------------
 print "------------------------------------START------------------------------------"
 print "-----------------------------------------------------------------------------"
 
-subprocess.Popen("./addons_xml_generator.py", shell=True, close_fds=True)
+# MOVED DIRECTORY TO build script:  subprocess.Popen("./addons_xml_generator.py", shell=True, close_fds=True))
 addonxml      = "./addons.xml"
 addonxmlmd5   = "./addons.xml.md5"
 
