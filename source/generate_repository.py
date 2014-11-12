@@ -42,6 +42,10 @@ for x in os.listdir('./'):
 	tree = ET.parse('./'+x+'/addon.xml')
 	root = tree.getroot()
 	version = root.get('version')
+        if x[:4]!='repo': #skip repo version
+            addonVersion = version
+        else:
+            repoVersion = version
         print "Version: "+version
         #### DO:
 	buildrepo(dest_dir+"*")
@@ -66,9 +70,12 @@ for x in os.listdir('./'):
 shutil.copy(addonxml, "../repo/")
 shutil.copy(addonxmlmd5, "../repo/")
 
-#add version numbers to Readme.md
-print('Update links in "downloads/README.md"')
-newreadme = "sed -i 's:-.\..\..\.zip:-'"+version+"'.zip:g' ../downloads/README.md"
+#add addonVersion numbers to Readme.md
+print('Update addon links in "downloads/README.md": ' + addonVersion)
+newreadme = "sed -i -e 's:frodo-.\..\..\.zip:frodo-'"+addonVersion+"'.zip:g' -e 's:gotham-.\..\..\.zip:gotham-'"+addonVersion+"'.zip:g' -e 's:streams-.\..\..\.zip:streams-'"+repoVersion+"'.zip:g' ../downloads/README.md"
+subprocess.Popen(newreadme, shell=True, close_fds=True)
+print('Update addon links in "/README.md": ' + addonVersion)
+newreadme = "sed -i -e 's:frodo-.\..\..\.zip:frodo-'"+addonVersion+"'.zip:g' -e 's:gotham-.\..\..\.zip:gotham-'"+addonVersion+"'.zip:g' -e 's:streams-.\..\..\.zip:streams-'"+repoVersion+"'.zip:g' ../README.md"
 subprocess.Popen(newreadme, shell=True, close_fds=True)
 
 

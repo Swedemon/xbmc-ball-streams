@@ -1,5 +1,5 @@
 #!/bin/bash
-echo on
+
 if [ ! -e build ]
 then
   echo
@@ -94,6 +94,7 @@ cd ./source
 echo "Generating Repo..."
 echo
 "C:/Program1/Python27/python.exe" ./addons_xml_generator.py
-"C:/Program1/Python27/python.exe" ./generate_repository
+#python ./addons_xml_generator.py
+"C:/Program1/Python27/python.exe" ./generate_repository.py
 #python ./generate_repository
 cd ..
