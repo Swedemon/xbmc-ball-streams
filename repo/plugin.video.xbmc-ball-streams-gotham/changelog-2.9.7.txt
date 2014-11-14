@@ -1,3 +1,11 @@
+[b]2.9.7[/b]
+- Added: Choosing final event now leads directly to on-demand streams
+- Added: Added refresh option at the top of live events when the list is large
+- Changed: Live events now show at the top
+- Changed: Flash events now specify HD or SD when stream URL indicates
+- Fixed: Eliminated defunct progressive streams
+- Fixed: Fixed bug that prevented condensed game building
+
 [b]2.9.6[/b]
 - Changed: Eliminate redundant iStream when duplicates HD or SD stream
 - Added: Refresh added at the top when several live events displayed

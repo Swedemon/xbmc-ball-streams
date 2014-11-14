@@ -1070,22 +1070,6 @@ def getRecentDateTime(daysBack = 0):
     now = datetime.datetime.now()
     return now - datetime.timedelta(daysBack)
 
-# Derive the progressive URL based on the given URL
-def deriveProgressiveUrl(streamUrl, baseUrl):
-    if streamUrl == None:
-        return None
-    sUrl = streamUrl.replace('m3u8','mp4')
-    parts = sUrl.split('/')
-    progressiveUrl = baseUrl
-    i = 0
-    for part in parts:
-        if i == len(parts)-1:
-            progressiveUrl += part
-        elif i > 4:
-            progressiveUrl += part + '/'
-        i += 1
-    return progressiveUrl
-
 # Method to setup a request object to ballstreams
 # @param url the url to setup the request to
 # @return an urllib2.Request object

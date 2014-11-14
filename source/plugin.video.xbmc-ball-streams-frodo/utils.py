@@ -23,6 +23,7 @@ class Mode:
     ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT = 13
     LIVE = 14
     LIVE_EVENT = 15
+    LIVE_FINALEVENT = 16
 
 # Method to get the parameters for the current view
 # @return an array of parameters

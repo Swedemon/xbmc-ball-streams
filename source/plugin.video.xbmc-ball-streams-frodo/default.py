@@ -185,8 +185,15 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     title = onDemandStream.event + ': ' + matchupStr + dateStr
 
     if flash and onDemandStream.streamSet['flash'] != None:
-        suffix = ' [Flash]'
-        utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        if 'HD.' in onDemandStream.streamSet['flash']and resolution != 'SD Only':
+            suffix = ' [Flash HD]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        elif 'SD.' in onDemandStream.streamSet['flash'] and resolution != 'HD Only':
+            suffix = ' [Flash SD]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        else:
+            suffix = ' [Flash]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
         suffix = ' [iStream HD]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
@@ -196,12 +203,6 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
         suffix = ' [iStream]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
-    if progressiveUrl != None and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [Progressive HD]'
-        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.hd'],progressiveUrl), '', totalItems, showfanart)
-    if progressiveUrl != None and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [Progressive SD]'
-        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'),progressiveUrl), '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -475,8 +476,8 @@ def HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, team, date):
             year = int(parts[2])
             dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
             # Build matchup
-            homeTeam = condensedGame.homeTeam if not shortNames else hockeystreams.shortTeamName(condensedGame.homeTeam, addonPath)
-            awayTeam = condensedGame.awayTeam if not shortNames else hockeystreams.shortTeamName(condensedGame.awayTeam, addonPath)
+            homeTeam = condensedGame.homeTeam if not shortNames else ballstreams.shortTeamName(condensedGame.homeTeam, addonPath)
+            awayTeam = condensedGame.awayTeam if not shortNames else ballstreams.shortTeamName(condensedGame.awayTeam, addonPath)
             matchupStr = awayTeam + ' @ ' + homeTeam
             if awayTeam == '' or homeTeam == '': # Indicates special event
                 matchupStr = awayTeam + homeTeam
@@ -530,8 +531,15 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     title = onDemandStream.event + ': ' + matchupStr + str(dateStr)
 
     if flash and onDemandStream.streamSet['flash'] != None:
-        suffix = ' [Flash]'
-        utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        if onDemandStream.streamSet['flash'].index('HD.')>0 and resolution != 'SD Only':
+            suffix = ' [Flash HD]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        elif onDemandStream.streamSet['flash'].index('SD.')>0 and resolution != 'HD Only':
+            suffix = ' [Flash SD]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        else:
+            suffix = ' [Flash]'
+            utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
         suffix = ' [iStream HD]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
@@ -541,12 +549,6 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
         suffix = ' [iStream]'
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
-    if progressiveUrl != None and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [Progressive HD]'
-        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.hd'],progressiveUrl), '', totalItems, showfanart)
-    if progressiveUrl != None and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [Progressive SD]'
-        utils.addLink(title + suffix, ballstreams.deriveProgressiveUrl(onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'),progressiveUrl), '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -578,7 +580,27 @@ def LIVE(session):
         }
         utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
+    buildLiveEvents(session, events, totalItems, True)
+    buildLiveEvents(session, events, totalItems, False)
+
+    # Add refresh button
+    refreshParams = {
+        'refresh': 'True'
+    }
+    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    setViewMode()
+
+# Method to build live only or inactive only event directories
+# Used to control order of live streams by state
+def buildLiveEvents(session, events, totalItems, liveOnly):
+
     for event in events:
+        if liveOnly and (event.isFuture or event.isFinal):
+            continue
+        elif not liveOnly and not event.isFuture and not event.isFinal:
+            continue
+
         # Build prefix
         prefix = '[COLOR blue][B][LIVE][/B][/COLOR] '
         if event.isFuture:
@@ -616,12 +638,16 @@ def LIVE(session):
 
         if event.isFinal:
             now = ballstreams.adjustedDateTime()
+            team = event.homeTeam if event.homeTeam != None and event.homeTeam != '' else event.awayTeam
             params = {
                 'year': str(now.year),
                 'month': str(now.month),
-                'day': str(now.day)
+                'day': str(now.day),
+                'team': str(team),
+                'feedType': str(event.feedType)
             }
-            utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, totalItems, showfanart)
+            print str(params)
+            utils.addDir(title, utils.Mode.LIVE_FINALEVENT, '', params, totalItems, showfanart)
         elif event.isFuture:
             refreshParams = {
                 'refresh': 'True'
@@ -632,14 +658,6 @@ def LIVE(session):
                 'eventId': event.eventId
             }
             utils.addDir(title, utils.Mode.LIVE_EVENT, '', params, totalItems, showfanart)
-
-    # Add refresh button
-    refreshParams = {
-        'refresh': 'True'
-    }
-    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
-
-    setViewMode()
 
 # Method to draw the live streams screen
 # which scrapes the external source and presents
@@ -693,8 +711,15 @@ def LIVE_EVENT(session, eventId):
         suffix = ' [TrueLive SD]'
         utils.addLink(title + suffix, liveStream.streamSet['truelive.sd'], '', totalItems, showfanart)
     if flash and liveStream.streamSet['flash'] != None:
-        suffix = ' [Flash]'
-        utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        if 'HD.' in liveStream.streamSet['flash'] and resolution != 'SD Only':
+            suffix = ' [Flash HD]'
+            utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        elif 'SD.' in liveStream.streamSet['flash'] and resolution != 'HD Only':
+            suffix = ' [Flash SD]'
+            utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+        else:
+            suffix = ' [Flash]'
+            utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution != 'SD Only' and liveStream.streamSet['istream.hd'] != None:
         suffix = ' [iStream HD]'
         utils.addLink(title + suffix, liveStream.streamSet['istream.hd'], '', totalItems, showfanart)
@@ -725,6 +750,38 @@ def LIVE_EVENT(session, eventId):
     utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
     setViewMode()
+
+# Method to draw the live streams screen
+# which scrapes the external source and presents
+# a list of current day event streams for an event id
+def LIVE_FINALEVENT(session, year, month, day, team, feedType):
+    print 'LIVE_FINALEVENT(session, year, month, day, feedType)'
+    print 'Year: ' + str(year)
+    print 'Month: ' + str(month)
+    print 'Day: ' + str(day)
+    print 'Team: ' + team
+    print 'FeedType: ' + str(feedType)
+
+    # Retrieve the events
+    date = datetime.date(year, month, day)
+    try:
+        events = ballstreams.dateOnDemandEvents(session, date)
+    except Exception as e:
+        print 'Warning:  No events found for date: ' + str(date) + ' Msg: ' + str(e)
+        return
+
+    # Search for matching event to display matching on-demand streams
+    for event in events:
+        print str(event.feedType)
+        if (event.homeTeam == team or event.awayTeam == team) and (not(feedType == 'Home Feed' or feedType == 'Away Feed') or feedType == event.feedType):
+            # Create datetime for string formatting
+            parts = event.date.split('/')
+            day = int(parts[1])
+            month = int(parts[0])
+            year = int(parts[2])
+            dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
+
+            ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, event.eventId, event.feedType, dateStr)
 
 # Method to populate recent events
 # which scrapes the external source and presents
@@ -795,29 +852,6 @@ location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
 daysback = addon.getSetting('daysback')
-progressiveUrl = addon.getSetting('progressive')
-if progressiveUrl == 'Disabled':
-    progressiveUrl = None
-elif progressiveUrl == 'Asia':
-    progressiveUrl = 'http://119.81.135.3/vod5/'
-elif progressiveUrl == 'Australia':
-    progressiveUrl = 'http://168.1.75.9/vod5/'
-elif progressiveUrl == 'Europe':
-    progressiveUrl = 'http://159.8.16.17/vod5/'
-elif progressiveUrl == 'North America - Central':
-    progressiveUrl = 'http://198.23.71.68/vod5/'
-elif progressiveUrl == 'North America - East':
-    progressiveUrl = 'http://198.23.71.68/vod5/'
-elif progressiveUrl == 'North America - East Canada':
-    progressiveUrl = 'http://198.23.71.68/vod5/'
-elif progressiveUrl == 'North America - West':
-    progressiveUrl = 'http://198.23.71.68/vod5/'
-elif progressiveUrl == 'Custom':
-    progressiveCustomUrl = addon.getSetting('progressiveCustomUrl')
-    if progressiveCustomUrl == None:
-        progressiveUrl = None
-    else:
-        progressiveUrl = progressiveCustomUrl
 
 # Load the directory params
 params = utils.getParams()
@@ -924,6 +958,8 @@ elif mode == utils.Mode.LIVE_EVENT:
     LIVE_EVENT(session, eventId)
     updateListing = refresh
     cacheToDisc = False
+elif mode == utils.Mode.LIVE_FINALEVENT:
+    LIVE_FINALEVENT(session, year, month, day, team, feedType)
 
 # Signal end of directory
 xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc = cacheToDisc, updateListing = updateListing)
