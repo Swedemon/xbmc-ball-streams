@@ -1,3 +1,8 @@
+[b]2.9.8[/b]
+- Fixed: Home and away indicators fixed within On-Demand event screens
+- Added: Events will now display source of non-home/away feeds when available
+- Changed: Coming soon events also display above final events
+
 [b]2.9.7[/b]
 - Added: Choosing final event now leads directly to on-demand streams
 - Added: Added refresh option at the top of live events when the list is large

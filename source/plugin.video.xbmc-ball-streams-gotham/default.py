@@ -136,12 +136,20 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         matchupStr = awayTeam + ' @ ' + homeTeam
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
-        if feedType == 'Home Feed':
+        if event.feedType == 'Home Feed':
             matchupStr = matchupStr + '*'
-        elif feedType == 'Away Feed':
+        elif event.feedType == 'Away Feed':
             matchupStr = awayTeam + '* @ ' + homeTeam
+        # Build feedStr
+        feedStr = ''
+        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+            feedStr = ''
+        elif event.feedType.endswith(' Feed'):
+            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+        else:
+            feedStr = ' - ' + event.feedType
         # Build title
-        title = event.event + ': ' + matchupStr + dateStr
+        title = event.event + ': ' + matchupStr + dateStr + feedStr
         if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
             title = '[COLOR red][B]' + title + '[/B][/COLOR]'
 
@@ -181,30 +189,38 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         matchupStr = matchupStr + '*'
     elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
+    # Build feedStr
+    feedStr = ''
+    if feedType == None or feedType == '' or feedType == 'Home Feed' or feedType == 'Away Feed':
+        feedStr = ''
+    elif feedType.endswith(' Feed'):
+        feedStr = ' - ' + feedType[:len(feedType)-5]
+    else:
+        feedStr = ' - ' + feedType
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + dateStr
 
     if flash and onDemandStream.streamSet['flash'] != None:
         if 'HD.' in onDemandStream.streamSet['flash']and resolution != 'SD Only':
-            suffix = ' [Flash HD]'
+            suffix = ' [Flash HD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
         elif 'SD.' in onDemandStream.streamSet['flash'] and resolution != 'HD Only':
-            suffix = ' [Flash SD]'
+            suffix = ' [Flash SD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
         else:
-            suffix = ' [Flash]'
+            suffix = ' [Flash]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [iStream HD]'
+        suffix = ' [iStream HD]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
     if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [iStream SD]'
+        suffix = ' [iStream SD]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
-        suffix = ' [iStream]'
+        suffix = ' [iStream]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
-        suffix = ' [WMV]'
+        suffix = ' [WMV]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
     try:
@@ -400,12 +416,20 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team):
         matchupStr = awayTeam + ' @ ' + homeTeam
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
-        if feedType == 'Home Feed':
+        if event.feedType == 'Home Feed':
             matchupStr = matchupStr + '*'
-        elif feedType == 'Away Feed':
+        elif event.feedType == 'Away Feed':
             matchupStr = awayTeam + '* @ ' + homeTeam
+        # Build feedStr
+        feedStr = ''
+        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+            feedStr = ''
+        elif event.feedType.endswith(' Feed'):
+            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+        else:
+            feedStr = ' - ' + event.feedType
         # Build title
-        title = event.event + ': ' + matchupStr + dateStr
+        title = event.event + ': ' + matchupStr + dateStr + feedStr
 
         params = {
             'eventId': event.eventId,
@@ -527,30 +551,38 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
         matchupStr = matchupStr + '*'
     elif feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
+    # Build feedStr
+    feedStr = ''
+    if feedType == None or feedType == '' or feedType == 'Home Feed' or feedType == 'Away Feed':
+        feedStr = ''
+    elif feedType.endswith(' Feed'):
+        feedStr = ' - ' + feedType[:len(feedType)-5]
+    else:
+        feedStr = ' - ' + feedType
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + str(dateStr)
 
     if flash and onDemandStream.streamSet['flash'] != None:
         if onDemandStream.streamSet['flash'].index('HD.')>0 and resolution != 'SD Only':
-            suffix = ' [Flash HD]'
+            suffix = ' [Flash HD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
         elif onDemandStream.streamSet['flash'].index('SD.')>0 and resolution != 'HD Only':
-            suffix = ' [Flash SD]'
+            suffix = ' [Flash SD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
         else:
-            suffix = ' [Flash]'
+            suffix = ' [Flash]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [iStream HD]'
+        suffix = ' [iStream HD]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
     if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [iStream SD]'
+        suffix = ' [iStream SD]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
     if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
-        suffix = ' [iStream]'
+        suffix = ' [iStream]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
-        suffix = ' [WMV]'
+        suffix = ' [WMV]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
 
     try:
@@ -591,14 +623,14 @@ def LIVE(session):
 
     setViewMode()
 
-# Method to build live only or inactive only event directories
-# Used to control order of live streams by state
+# Method to build live events
+# liveOnly determines ordering by event status
 def buildLiveEvents(session, events, totalItems, liveOnly):
 
     for event in events:
-        if liveOnly and (event.isFuture or event.isFinal):
+        if liveOnly and event.isFinal:
             continue
-        elif not liveOnly and not event.isFuture and not event.isFinal:
+        elif not liveOnly and not event.isFinal:
             continue
 
         # Build prefix
@@ -617,6 +649,14 @@ def buildLiveEvents(session, events, totalItems, liveOnly):
             matchupStr = matchupStr + '*'
         elif event.feedType == 'Away Feed':
             matchupStr = awayTeam + '* @ ' + homeTeam
+        # Build feedStr
+        feedStr = ''
+        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+            feedStr = ''
+        elif event.feedType.endswith(' Feed'):
+            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+        else:
+            feedStr = ' - ' + event.feedType
         # Build period
         periodStr = ''
         if event.period == 'HALF - ':
@@ -632,9 +672,9 @@ def buildLiveEvents(session, events, totalItems, liveOnly):
         if periodStr == '':
             startTimeStr = ' - ' + event.startTime
         # Build title
-        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr
+        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + feedStr
         if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
-            title = prefix + '[COLOR red][B]' + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + '[/B][/COLOR]'
+            title = prefix + '[COLOR red][B]' + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + feedStr + '[/B][/COLOR]'
 
         if event.isFinal:
             now = ballstreams.adjustedDateTime()
@@ -686,6 +726,14 @@ def LIVE_EVENT(session, eventId):
         matchupStr = matchupStr + '*'
     elif liveStream.feedType == 'Away Feed':
         matchupStr = awayTeam + '* @ ' + homeTeam
+    # Build feedStr
+    feedStr = ''
+    if liveStream.feedType == None or liveStream.feedType == '' or liveStream.feedType == 'Home Feed' or liveStream.feedType == 'Away Feed':
+        feedStr = ''
+    elif liveStream.feedType.endswith(' Feed'):
+        feedStr = ' - ' + liveStream.feedType[:len(liveStream.feedType)-5]
+    else:
+        feedStr = ' - ' + liveStream.feedType
     # Build period
     periodStr = ''
     if liveStream.period == 'HALF - ':
