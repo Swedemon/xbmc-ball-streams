@@ -210,10 +210,10 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [iStream]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if hls and onDemandStream.streamSet['hls'] != None:
-        if onDemandStream.streamSet['hls'].index('HD.')>0 and resolution != 'SD Only':
+        if 'HD.' in onDemandStream.streamSet['hls'] and resolution != 'SD Only':
             suffix = ' [HLS HD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
-        elif onDemandStream.streamSet['hls'].index('SD.')>0 and resolution != 'HD Only':
+        elif 'SD.' in onDemandStream.streamSet['hls'] and resolution != 'HD Only':
             suffix = ' [HLS SD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
         else:
@@ -582,20 +582,20 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
         suffix = ' [iStream]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if hls and onDemandStream.streamSet['hls'] != None:
-        if onDemandStream.streamSet['hls'].index('HD.')>0 and resolution != 'SD Only':
+        if 'HD.' in onDemandStream.streamSet['hls'] and resolution != 'SD Only':
             suffix = ' [HLS HD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
-        elif onDemandStream.streamSet['hls'].index('SD.')>0 and resolution != 'HD Only':
+        elif 'SD.' in onDemandStream.streamSet['hls'] and resolution != 'HD Only':
             suffix = ' [HLS SD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
         else:
             suffix = ' [HLS]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
     if flash and onDemandStream.streamSet['flash'] != None:
-        if onDemandStream.streamSet['flash'].index('HD.')>0 and resolution != 'SD Only':
+        if 'HD.' in onDemandStream.streamSet['flash'] and resolution != 'SD Only':
             suffix = ' [Flash HD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-        elif onDemandStream.streamSet['flash'].index('SD.')>0 and resolution != 'HD Only':
+        elif 'SD.' in onDemandStream.streamSet['flash'] and resolution != 'HD Only':
             suffix = ' [Flash SD]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
         else:
