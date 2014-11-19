@@ -17,9 +17,10 @@
     <category label="100033">
         <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />
         <setting id="resolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
-        <setting id="flash" type="bool" label="100017" default="true" />
+        <setting id="flash" type="bool" label="100017" default="false" />
         <setting id="truelive" type="bool" label="100026" default="true" />
         <setting id="istream" type="bool" label="100016" default="true" />
+        <setting id="hls" type="bool" label="100041" default="true" />
         <setting id="dvr" type="bool" label="100035" default="false" />
     </category>
 </settings>

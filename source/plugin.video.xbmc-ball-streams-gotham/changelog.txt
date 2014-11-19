@@ -1,3 +1,9 @@
+[b]2.9.9[/b]
+- Added: HLS stream option added, applies to on-demand events
+- Changed: Hide flash stream when duplicate of istream
+- Changed: Renamed dvr streams to match as the API defines them: nondvr
+- Fixed: Condensed game bug fixed
+
 [b]2.9.8[/b]
 - Fixed: Home and away indicators fixed within On-Demand event screens
 - Added: Events will now display source of non-home/away feeds when available

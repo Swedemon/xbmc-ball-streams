@@ -139,7 +139,7 @@ msgid "Display Fanart (requires restart)"
 msgstr ""
 
 msgctxt "#100035"
-msgid "Enable DVR Streams (no rewind functionality)"
+msgid "Enable NonDVR Streams (mobile)"
 msgstr ""
 
 msgctxt "#100036"
@@ -160,4 +160,8 @@ msgstr ""
 
 msgctxt "#100040"
 msgid "OnDemand Settings"
+msgstr ""
+
+msgctxt "#100041"
+msgid "Enable HLS (m3u8)"
 msgstr ""

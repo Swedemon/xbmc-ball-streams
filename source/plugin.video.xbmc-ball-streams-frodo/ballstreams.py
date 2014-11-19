@@ -4,6 +4,9 @@ import urllib, urllib2, datetime, time, json, os
 # author: craig mcnicholas, andrew wise (since v2.8.2)
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
+# Set debug to True to print API results to the xbmc.log
+API_DEBUG = False
+
 # Represents a session class which contains a users login
 # session information from ballstreams
 class Session():
@@ -221,6 +224,8 @@ def login(username, password):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print 'https://api.ballstreams.com/Login ' + str(js)
 
     # Get the user session info
     userId = js['uid']
@@ -289,6 +294,8 @@ def ipException(session):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print 'https://api.ballstreams.com/IPException ' + str(js)
 
     return True
 
@@ -312,6 +319,8 @@ def onDemandDates(session):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the dates array
     dates = js['dates']
@@ -353,6 +362,8 @@ def teams(session, league = None):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the teams array
     teams = js['teams']
@@ -455,6 +466,8 @@ def dateOnDemandHighlights(session, date = None, team = None):
         return highlights
 
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the schedule array
     highlightArray = js['highlights']
@@ -533,6 +546,8 @@ def dateOnDemandCondensed(session, date = None, team = None):
         return condenseds
 
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the schedule array
     condensedGames = js['condensed']
@@ -588,6 +603,8 @@ def parseOnDemandEvents(url):
     js = json.loads(page)
 
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the ondemand array
     onDemand = js['ondemand']
@@ -656,12 +673,18 @@ def onDemandEventStreams(session, eventId, location=None):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the on-demand stream variables
     eventId = js['id']
     event = js['event']
     homeTeam = js['homeTeam']
     awayTeam = js['awayTeam']
+    flashSRC = js['FlashSRC']
+    windowsMediaSRC = js['WindowsMediaSRC']
+    iStreamSRC = js['iStreamSRC']
+    hlsSRC = js['hlsSRC']
 
     # Get the streams
     streams = js['streams'] if 'streams' in js else []
@@ -674,7 +697,8 @@ def onDemandEventStreams(session, eventId, location=None):
         'flash': None,
         'istream': None,
         'istream.hd': None,
-        'istream.sd': None
+        'istream.sd': None,
+        'hls': None
     }
 
     # Find the streams
@@ -705,6 +729,12 @@ def onDemandEventStreams(session, eventId, location=None):
             # Only set it if the source url is valid
             if flashSource is not None and len(flashSource) > 0 and flashSource.lower().startswith('http'):
                 result['flash'] = flashSource
+        elif streamType.lower() == 'hls':
+            hlsSource = stream['src']
+
+            # Only set it if the source url is valid
+            if hlsSource is not None and len(hlsSource) > 0 and hlsSource.lower().startswith('http'):
+                result['hls'] = hlsSource
 
     # Find the HD streams
     for stream in hdStreams:
@@ -740,6 +770,23 @@ def onDemandEventStreams(session, eventId, location=None):
             if iStreamSource is not None and len(iStreamSource) > 0 and iStreamSource.lower().startswith('http'):
                 result['istream.sd'] = iStreamSource
 
+    # Overwrite with parent stream variables
+    if flashSRC != None and len(flashSRC) > 0:
+        result['flash'] = flashSRC
+    if windowsMediaSRC != None and len(windowsMediaSRC) > 0:
+        result['wmv'] = windowsMediaSRC
+    if iStreamSRC != None and len(iStreamSRC) > 0:
+        result['istream'] = iStreamSRC
+    if hlsSRC != None and len(hlsSRC) > 0:
+        result['hls'] = hlsSRC
+    
+    # Omit flash when is same as istreams
+    if result['flash'] in result['istream'] or result['flash'] in result['istream.sd'] or result['flash'] in result['istream.hd']:
+        result['flash'] = None
+    
+    if API_DEBUG == True:
+        print 'onDemandEventStreams ' + str(result)
+
     return OnDemandStream(eventId, event, homeTeam, awayTeam, result)
 
 # Method to get a list of events that are live or in the future
@@ -751,8 +798,11 @@ def liveEvents(session):
         'token': session.token
     })
 
+    # Create url
+    url = 'https://api.ballstreams.com/GetLive?' + data
+    
     # Get response for events
-    request = __setupRequest('https://api.ballstreams.com/GetLive?' + data)
+    request = __setupRequest(url)
     response = urllib2.urlopen(request)
     page = response.read()
     response.close()
@@ -766,6 +816,8 @@ def liveEvents(session):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the schedule array
     schedule = js['schedule']
@@ -851,6 +903,8 @@ def liveEventStreams(session, eventId, location=None):
 
     # Check the api request was successful
     __checkStatus(js)
+    if API_DEBUG == True:
+        print url + ' ' + str(js)
 
     # Get the live stream variables
     eventId = js['id']

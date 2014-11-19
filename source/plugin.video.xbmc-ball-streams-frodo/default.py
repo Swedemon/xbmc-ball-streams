@@ -200,6 +200,25 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + dateStr
 
+    if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
+        suffix = ' [iStream HD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
+    if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
+        suffix = ' [iStream SD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
+        suffix = ' [iStream]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
+    if hls and onDemandStream.streamSet['hls'] != None:
+        if onDemandStream.streamSet['hls'].index('HD.')>0 and resolution != 'SD Only':
+            suffix = ' [HLS HD]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+        elif onDemandStream.streamSet['hls'].index('SD.')>0 and resolution != 'HD Only':
+            suffix = ' [HLS SD]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+        else:
+            suffix = ' [HLS]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
     if flash and onDemandStream.streamSet['flash'] != None:
         if 'HD.' in onDemandStream.streamSet['flash']and resolution != 'SD Only':
             suffix = ' [Flash HD]' + feedStr
@@ -210,15 +229,6 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         else:
             suffix = ' [Flash]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [iStream HD]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
-    if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [iStream SD]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
-        suffix = ' [iStream]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -453,7 +463,7 @@ def HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, team, date):
         highlights = ballstreams.dateOnDemandHighlights(session, date, team)
     condensedGames = []
     if showcondensed:
-        condensedGames = ballstreams.dateOnDemandHighlights(session, date, team)
+        condensedGames = ballstreams.dateOnDemandCondensed(session, date, team)
 
     totalItems = len(highlights) + len(condensedGames)
 
@@ -475,7 +485,7 @@ def HIGHLIGHTSANDCONDENSED_BYTEAM_TEAMDATE(session, team, date):
             # Build title
             title = '[Highlight] ' + highlight.event + ': ' + matchupStr + dateStr
 
-            if highlight.highQualitySrc != None and len(highlight.highQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
+            if highlight.highQualitySrc != None and len(highlight.highQualitySrc) > 0 and src.count(highlight.highQualitySrc) == 0:
                 utils.addLink(title + ' [Hi]', highlight.highQualitySrc, '', totalItems, showfanart)
                 src.append(highlight.highQualitySrc)
             if highlight.medQualitySrc != None and len(highlight.medQualitySrc) > 0 and src.count(highlight.medQualitySrc) == 0:
@@ -562,6 +572,25 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + str(dateStr)
 
+    if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
+        suffix = ' [iStream HD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
+    if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
+        suffix = ' [iStream SD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
+        suffix = ' [iStream]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
+    if hls and onDemandStream.streamSet['hls'] != None:
+        if onDemandStream.streamSet['hls'].index('HD.')>0 and resolution != 'SD Only':
+            suffix = ' [HLS HD]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+        elif onDemandStream.streamSet['hls'].index('SD.')>0 and resolution != 'HD Only':
+            suffix = ' [HLS SD]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+        else:
+            suffix = ' [HLS]' + feedStr
+            utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
     if flash and onDemandStream.streamSet['flash'] != None:
         if onDemandStream.streamSet['flash'].index('HD.')>0 and resolution != 'SD Only':
             suffix = ' [Flash HD]' + feedStr
@@ -572,15 +601,6 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
         else:
             suffix = ' [Flash]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution != 'SD Only' and onDemandStream.streamSet['istream.hd'] != None:
-        suffix = ' [iStream HD]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream.hd'], '', totalItems, showfanart)
-    if istream and resolution != 'HD Only' and onDemandStream.streamSet['istream.sd'] != None:
-        suffix = ' [iStream SD]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution == 'All' and onDemandStream.streamSet['istream'] != None and onDemandStream.streamSet['istream'] != onDemandStream.streamSet['istream.hd']:
-        suffix = ' [iStream]' + feedStr
-        utils.addLink(title + suffix, onDemandStream.streamSet['istream'], '', totalItems, showfanart)
     if wmv and onDemandStream.streamSet['wmv'] != None:
         suffix = ' [WMV]' + feedStr
         utils.addLink(title + suffix, onDemandStream.streamSet['wmv'], '', totalItems, showfanart)
@@ -758,6 +778,15 @@ def LIVE_EVENT(session, eventId):
     if truelive and resolution != 'HD Only' and liveStream.streamSet['truelive.sd'] != None:
         suffix = ' [TrueLive SD]'
         utils.addLink(title + suffix, liveStream.streamSet['truelive.sd'], '', totalItems, showfanart)
+    if istream and resolution != 'SD Only' and liveStream.streamSet['istream.hd'] != None:
+        suffix = ' [iStream HD]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream.hd'], '', totalItems, showfanart)
+    if istream and resolution != 'HD Only' and liveStream.streamSet['istream.sd'] != None:
+        suffix = ' [iStream SD]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
+    if istream and resolution == 'All' and liveStream.streamSet['istream'] != None and liveStream.streamSet['istream'] != liveStream.streamSet['istream.hd']:
+        suffix = ' [iStream]'
+        utils.addLink(title + suffix, liveStream.streamSet['istream'], '', totalItems, showfanart)
     if flash and liveStream.streamSet['flash'] != None:
         if 'HD.' in liveStream.streamSet['flash'] and resolution != 'SD Only':
             suffix = ' [Flash HD]'
@@ -768,27 +797,18 @@ def LIVE_EVENT(session, eventId):
         else:
             suffix = ' [Flash]'
             utils.addLink(title + suffix, liveStream.streamSet['flash'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution != 'SD Only' and liveStream.streamSet['istream.hd'] != None:
-        suffix = ' [iStream HD]'
-        utils.addLink(title + suffix, liveStream.streamSet['istream.hd'], '', totalItems, showfanart)
-    if istream and resolution != 'HD Only' and liveStream.streamSet['istream.sd'] != None:
-        suffix = ' [iStream SD]'
-        utils.addLink(title + suffix, liveStream.streamSet['istream.sd'].replace('f4m', 'm3u8'), '', totalItems, showfanart)
-    if istream and resolution == 'All' and liveStream.streamSet['istream'] != None and liveStream.streamSet['istream'] != liveStream.streamSet['istream.hd']:
-        suffix = ' [iStream]'
-        utils.addLink(title + suffix, liveStream.streamSet['istream'], '', totalItems, showfanart)
-    if dvr and resolution != 'SD Only' and liveStream.streamSet['nondvrhd'] != None:
-        suffix = ' [DVR HD]'
-        utils.addLink(title + suffix, liveStream.streamSet['nondvrhd'], '', totalItems, showfanart)
-    if dvr and resolution != 'HD Only' and liveStream.streamSet['nondvrsd'] != None:
-        suffix = ' [DVR SD]'
-        utils.addLink(title + suffix, liveStream.streamSet['nondvrsd'], '', totalItems, showfanart)
-    if dvr and resolution == 'All' and liveStream.streamSet['nondvr'] != None:
-        suffix = ' [DVR]'
-        utils.addLink(title + suffix, liveStream.streamSet['nondvr'], '', totalItems, showfanart)
     if wmv and liveStream.streamSet['wmv'] != None:
         suffix = ' [WMV]'
         utils.addLink(title + suffix, liveStream.streamSet['wmv'], '', totalItems, showfanart)
+    if dvr and resolution != 'SD Only' and liveStream.streamSet['nondvrhd'] != None:
+        suffix = ' [NonDVR HD]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvrhd'], '', totalItems, showfanart)
+    if dvr and resolution != 'HD Only' and liveStream.streamSet['nondvrsd'] != None:
+        suffix = ' [NonDVR SD]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvrsd'], '', totalItems, showfanart)
+    if dvr and resolution == 'All' and liveStream.streamSet['nondvr'] != None:
+        suffix = ' [NonDVR]'
+        utils.addLink(title + suffix, liveStream.streamSet['nondvr'], '', totalItems, showfanart)
 
     # Add refresh button
     refreshParams = {
@@ -896,6 +916,8 @@ truelive = addon.getSetting('truelive')
 truelive = truelive != None and truelive.lower() == 'true'
 dvr = addon.getSetting('dvr')
 dvr = dvr != None and dvr.lower() == 'true'
+hls = addon.getSetting('hls')
+hls = hls != None and hls.lower() == 'true'
 location = addon.getSetting('location')
 if location != None and location.lower() == 'auto':
     location = None # Location is special, if it is 'Auto' then it is None
