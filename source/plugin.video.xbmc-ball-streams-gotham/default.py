@@ -219,6 +219,9 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
         else:
             suffix = ' [HLS]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+    if hls and onDemandStream.streamSet['hls.sd'] != None and resolution != 'HD Only':
+        suffix = ' [HLS SD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['hls.sd'], '', totalItems, showfanart)
     if flash and onDemandStream.streamSet['flash'] != None:
         if 'HD.' in onDemandStream.streamSet['flash']and resolution != 'SD Only':
             suffix = ' [Flash HD]' + feedStr
@@ -591,6 +594,9 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
         else:
             suffix = ' [HLS]' + feedStr
             utils.addLink(title + suffix, onDemandStream.streamSet['hls'], '', totalItems, showfanart)
+    if hls and onDemandStream.streamSet['hls.sd'] != None and resolution != 'HD Only':
+        suffix = ' [HLS SD]' + feedStr
+        utils.addLink(title + suffix, onDemandStream.streamSet['hls.sd'], '', totalItems, showfanart)
     if flash and onDemandStream.streamSet['flash'] != None:
         if 'HD.' in onDemandStream.streamSet['flash'] and resolution != 'SD Only':
             suffix = ' [Flash HD]' + feedStr

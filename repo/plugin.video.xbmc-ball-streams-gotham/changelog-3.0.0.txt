@@ -1,3 +1,7 @@
+[b]3.0.0[/b]
+- Added: HLS SD option added as derived from HLS HD streams
+- Fixed: Omit iStream when it is redundant to HD or SD equivalent
+
 [b]2.9.9[/b]
 - Added: HLS stream option added, applies to on-demand events
 - Changed: Hide flash stream when duplicate of istream

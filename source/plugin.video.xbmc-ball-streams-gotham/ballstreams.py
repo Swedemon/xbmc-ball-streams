@@ -203,9 +203,12 @@ def login(username, password):
         'password': password,
         'key': API_KEY
     })
+    
+    # Create url
+    url = 'https://api.ballstreams.com/Login'
 
     # Get login response
-    request = __setupRequest('https://api.ballstreams.com/Login')
+    request = __setupRequest(url)
     response = None
 
     try:
@@ -225,7 +228,7 @@ def login(username, password):
     # Check the api request was successful
     __checkStatus(js)
     if API_DEBUG == True:
-        print 'https://api.ballstreams.com/Login ' + str(js)
+        print url + ' ' + str(js)
 
     # Get the user session info
     userId = js['uid']
@@ -261,9 +264,12 @@ def checkIp(username):
     data = urllib.urlencode({
         'username': username
     })
+    
+    # Create url
+    url = 'https://www4.ballstreams.com/scripts/check_ip.php?' + data
 
     # Get response for ip check
-    request = __setupRequest('https://www4.ballstreams.com/scripts/check_ip.php?' + data)
+    request = __setupRequest(url)
     response = urllib2.urlopen(request, data)
     page = response.read()
     response.close()
@@ -282,9 +288,12 @@ def ipException(session):
     data = urllib.urlencode({
         'token': session.token
     })
+    
+    # Create url
+    url = 'https://api.ballstreams.com/IPException'
 
     # Get response for ip exception
-    request = __setupRequest('https://api.ballstreams.com/IPException')
+    request = __setupRequest(url)
     response = urllib2.urlopen(request, data)
     page = response.read()
     response.close()
@@ -295,7 +304,7 @@ def ipException(session):
     # Check the api request was successful
     __checkStatus(js)
     if API_DEBUG == True:
-        print 'https://api.ballstreams.com/IPException ' + str(js)
+        print url + ' ' + str(js)
 
     return True
 
@@ -307,9 +316,12 @@ def onDemandDates(session):
     data = urllib.urlencode({
         'token': session.token
     })
+    
+    # Create url
+    url = 'https://api.ballstreams.com/GetOnDemandDates?' + data
 
     # Get response for available dates
-    request = __setupRequest('https://api.ballstreams.com/GetOnDemandDates?' + data)
+    request = __setupRequest(url)
     response = urllib2.urlopen(request)
     page = response.read()
     response.close()
@@ -350,9 +362,12 @@ def teams(session, league = None):
     data = urllib.urlencode({
         'token': session.token
     })
+    
+    # Create url
+    url = 'https://api.ballstreams.com/ListTeams?' + data
 
     # Get response for teams
-    request = __setupRequest('https://api.ballstreams.com/ListTeams?' + data)
+    request = __setupRequest(url)
     response = urllib2.urlopen(request)
     page = response.read()
     response.close()
@@ -408,6 +423,7 @@ def dateOnDemandEvents(session, date):
         'date': month + '/' + day + '/' + year
     })
     
+    # Create url
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
 
     events = parseOnDemandEvents(url)
@@ -448,6 +464,7 @@ def dateOnDemandHighlights(session, date = None, team = None):
                 'token': session.token
             })
 
+    # Create url
     url = 'https://api.ballstreams.com/GetHighlights?' + data
 
     # Get response for events
@@ -528,6 +545,7 @@ def dateOnDemandCondensed(session, date = None, team = None):
                 'token': session.token
             })
 
+    # Create url
     url = 'https://api.ballstreams.com/GetCondensedGames?' + data
 
     # Get response for events
@@ -585,6 +603,7 @@ def teamOnDemandEvents(session, team):
         'team': team.name
     })
 
+    # Create url
     url = 'https://api.ballstreams.com/GetOnDemand?' + data
 
     return parseOnDemandEvents(url)
@@ -698,7 +717,8 @@ def onDemandEventStreams(session, eventId, location=None):
         'istream': None,
         'istream.hd': None,
         'istream.sd': None,
-        'hls': None
+        'hls': None,
+        'hls.sd': None
     }
 
     # Find the streams
@@ -780,9 +800,16 @@ def onDemandEventStreams(session, eventId, location=None):
     if hlsSRC != None and len(hlsSRC) > 0:
         result['hls'] = hlsSRC
     
+    # Manually append an HLS.SD stream
+    if 'HD.' in result['hls']:
+        result['hls.sd'] = result['hls'].replace('HD.','SD.')
+    
     # Omit flash when is same as istreams
     if result['flash'] in result['istream'] or result['flash'] in result['istream.sd'] or result['flash'] in result['istream.hd']:
         result['flash'] = None
+    # Omit istream when is same as other istreams
+    if result['istream'] in result['istream.hd'] or result['istream'] in result['istream.hd']:
+        result['istream'] = None
     
     if API_DEBUG == True:
         print 'onDemandEventStreams ' + str(result)
