@@ -8,10 +8,8 @@ import os, datetime, threading, random, time
 
 # deals with a bug where errors are thrown 
 # if data directory does not exist.
-addonId = 'plugin.video.xbmc-ball-streams-frodo'
-dataPath = 'special://profile/addon_data/' + addonId
-if not os.path.exists: os.makedirs(dataPath)
-addon = xbmcaddon.Addon(id = addonId)
+if not os.path.exists: os.makedirs(utils.dataPath)
+addon = xbmcaddon.Addon(id = utils.addonId)
 addonPath = addon.getAddonInfo('path')
 
 # Method to draw the home screen
@@ -121,8 +119,23 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         return
 
     totalItems = len(events)
+    
+    buildOnDemandEvents(session, events, totalItems, 1) # favorite
+    buildOnDemandEvents(session, events, totalItems, 2) # non-favorites
 
+    setViewMode()
+
+# Method to build on-demand events
+# @param filter 0 = ALL, 1 = favorite, 2 = non favorites
+def buildOnDemandEvents(session, events, totalItems, filter):
     for event in events:
+        # skip condition 1
+        if filter == 1 and not (event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+        # skip condition 2
+        if filter == 2 and (event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+
         # Create datetime for string formatting
         parts = event.date.split('/')
         day = int(parts[1])
@@ -159,8 +172,6 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
             'dateStr': dateStr
         }
         utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT, '', params, totalItems, showfanart)
-
-    setViewMode()
 
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
@@ -638,8 +649,9 @@ def LIVE(session):
         }
         utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
 
-    buildLiveEvents(session, events, totalItems, True)
-    buildLiveEvents(session, events, totalItems, False)
+    buildLiveEvents(session, events, totalItems, 1) # favorite team
+    buildLiveEvents(session, events, totalItems, 2) # live/coming soon
+    buildLiveEvents(session, events, totalItems, 3) # final
 
     # Add refresh button
     refreshParams = {
@@ -650,13 +662,18 @@ def LIVE(session):
     setViewMode()
 
 # Method to build live events
-# liveOnly determines ordering by event status
-def buildLiveEvents(session, events, totalItems, liveOnly):
+# @param filter 0 = ALL, 1 = favorite only, 2 = live/comingSoon only, 3 = final only
+def buildLiveEvents(session, events, totalItems, filter):
 
     for event in events:
-        if liveOnly and event.isFinal:
+        # skip condition 1
+        if filter == 1 and not (event.homeTeam == session.favteam or event.awayTeam == session.favteam):
             continue
-        elif not liveOnly and not event.isFinal:
+        # skip condition 2
+        if filter == 2 and (event.isFinal or event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+        # skip condition 3
+        elif filter == 3 and (not event.isFinal or event.homeTeam == session.favteam or event.awayTeam == session.favteam):
             continue
 
         # Build prefix
