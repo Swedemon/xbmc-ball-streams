@@ -1,3 +1,6 @@
+[b]3.0.2[/b]
+- Fixed: Script error addressed in default script
+
 [b]3.0.1[/b]
 - Changed: On-demand by date displays favorite team at the top
 - Changed: Live event displays favorite team at the top

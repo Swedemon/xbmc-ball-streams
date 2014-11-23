@@ -8,8 +8,10 @@ import os, datetime, threading, random, time
 
 # deals with a bug where errors are thrown 
 # if data directory does not exist.
-if not os.path.exists: os.makedirs(utils.dataPath)
-addon = xbmcaddon.Addon(id = utils.addonId)
+addonId = 'plugin.video.xbmc-ball-streams-gotham'
+dataPath = 'special://profile/addon_data/' + addonId
+if not os.path.exists: os.makedirs(dataPath)
+addon = xbmcaddon.Addon(id = addonId)
 addonPath = addon.getAddonInfo('path')
 
 # Method to draw the home screen
