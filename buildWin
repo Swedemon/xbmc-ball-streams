@@ -93,6 +93,8 @@ cd ./source
 #clear
 echo "Generating Repo..."
 echo
-python ./addons_xml_generator.py
-python ./generate_repository.py
+"C:/Program1/Python27/python.exe" ./addons_xml_generator.py
+#python ./addons_xml_generator.py
+"C:/Program1/Python27/python.exe" ./generate_repository.py
+#python ./generate_repository
 cd ..
