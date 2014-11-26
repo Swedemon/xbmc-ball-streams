@@ -5,7 +5,7 @@ import urllib, urllib2, datetime, time, json, os
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # Set debug to True to print API results to the xbmc.log
-API_DEBUG = False
+API_DEBUG = True
 
 # Represents a session class which contains a users login
 # session information from ballstreams
@@ -33,7 +33,7 @@ class Session():
 class LiveEvent():
 
     # Creates a new event instance
-    def __init__(self, eventId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType):
+    def __init__(self, eventId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType, trueLiveHD = None, trueLiveSD = None, hdUrl = None, sdUrl = None, srcUrl = None):
         self.eventId = eventId
         self.event = event
         self.homeTeam = homeTeam
@@ -44,6 +44,11 @@ class LiveEvent():
         self.period = period if period != None else ''
         self.isPlaying = isPlaying
         self.feedType = feedType
+        self.trueLiveHD = trueLiveHD
+        self.trueLiveSD = trueLiveSD
+        self.srcUrl = srcUrl
+        self.sdUrl = sdUrl
+        self.hdUrl = hdUrl
         # Special logic needed to define isFuture and isFinal parameters
         if self.isPlaying:
             self.isFuture = False
@@ -866,6 +871,11 @@ def liveEvents(session):
         period = item['period']
         isPlaying = item['isPlaying']
         feedType = item['feedType']
+        trueLiveHD = item['TrueLiveHD']
+        trueLiveSD = item['TrueLiveSD']
+        hdUrl = item['hdUrl']
+        sdUrl = item['sdUrl']
+        srcUrl = item['srcUrl']
 
         # Check schedule item id
         if eventId == None:
@@ -895,7 +905,7 @@ def liveEvents(session):
         # Convert the value to a boolean
         isPlaying = str(isPlaying) == '1'
 
-        events.append(LiveEvent(eventId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType))
+        events.append(LiveEvent(eventId, event, homeTeam, homeScore, awayTeam, awayScore, startTime, period, isPlaying, feedType, trueLiveHD, trueLiveSD, hdUrl, sdUrl, srcUrl))
 
     return events
 

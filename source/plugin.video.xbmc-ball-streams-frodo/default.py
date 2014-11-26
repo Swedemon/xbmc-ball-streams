@@ -19,6 +19,7 @@ def HOME():
     print 'HOME()'
     utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, 2, showfanart)
     utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, 2, showfanart)
+    utils.addDir('[ Live / Coming Soon (Alternate) ]', utils.Mode.LIVEEVENT, '', None, 2, showfanart)
 
     setViewMode()
 
@@ -152,17 +153,19 @@ def buildOnDemandEvents(session, events, totalItems, filter):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = matchupStr + '*'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
         elif event.feedType == 'Away Feed':
-            matchupStr = awayTeam + '* @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
-        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+        if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
             feedStr = ''
+        elif event.feedType == None or event.feedType == '':
+            feedStr = ' - ' + 'N/A'
         elif event.feedType.endswith(' Feed'):
-            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType[:len(event.feedType)-5] + '[/COLOR]'
         else:
-            feedStr = ' - ' + event.feedType
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType + '[/COLOR]'
         # Build title
         title = event.event + ': ' + matchupStr + dateStr + feedStr
         if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
@@ -199,17 +202,19 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     if awayTeam == '' or homeTeam == '': # Indicates special event
         matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
-        matchupStr = matchupStr + '*'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
     elif feedType == 'Away Feed':
-        matchupStr = awayTeam + '* @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
-    if feedType == None or feedType == '' or feedType == 'Home Feed' or feedType == 'Away Feed':
+    if feedType == 'Home Feed' or feedType == 'Away Feed':
         feedStr = ''
+    elif feedType == None or feedType == '':
+        feedStr = ' - ' + 'N/A'
     elif feedType.endswith(' Feed'):
-        feedStr = ' - ' + feedType[:len(feedType)-5]
+        feedStr = ' - ' + '[COLOR lightgreen]' + feedType[:len(feedType)-5] + '[/COLOR]'
     else:
-        feedStr = ' - ' + feedType
+        feedStr = ' - ' + '[COLOR lightgreen]' + feedType + '[/COLOR]'
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + dateStr
 
@@ -443,17 +448,19 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = matchupStr + '*'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
         elif event.feedType == 'Away Feed':
-            matchupStr = awayTeam + '* @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
-        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+        if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
             feedStr = ''
+        elif event.feedType == None or event.feedType == '':
+            feedStr = ' - ' + 'N/A'
         elif event.feedType.endswith(' Feed'):
-            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType[:len(event.feedType)-5] + '[/COLOR]'
         else:
-            feedStr = ' - ' + event.feedType
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType + '[/COLOR]'
         # Build title
         title = event.event + ': ' + matchupStr + dateStr + feedStr
 
@@ -574,17 +581,19 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     if awayTeam == '' or homeTeam == '': # Indicates special event
         matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
-        matchupStr = matchupStr + '*'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
     elif feedType == 'Away Feed':
-        matchupStr = awayTeam + '* @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
-    if feedType == None or feedType == '' or feedType == 'Home Feed' or feedType == 'Away Feed':
+    if feedType == 'Home Feed' or feedType == 'Away Feed':
         feedStr = ''
+    elif feedType == None or feedType == '':
+        feedStr = ' - ' + 'N/A'
     elif feedType.endswith(' Feed'):
-        feedStr = ' - ' + feedType[:len(feedType)-5]
+        feedStr = ' - ' + '[COLOR lightgreen]' + feedType[:len(feedType)-5] + '[/COLOR]'
     else:
-        feedStr = ' - ' + feedType
+        feedStr = ' - ' + '[COLOR lightgreen]' + feedType + '[/COLOR]'
     # Build title
     title = onDemandStream.event + ': ' + matchupStr + str(dateStr)
 
@@ -691,17 +700,19 @@ def buildLiveEvents(session, events, totalItems, filter):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = matchupStr + '*'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
         elif event.feedType == 'Away Feed':
-            matchupStr = awayTeam + '* @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
-        if event.feedType == None or event.feedType == '' or event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+        if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
             feedStr = ''
+        elif event.feedType == None or event.feedType == '':
+            feedStr = ' - ' + 'N/A'
         elif event.feedType.endswith(' Feed'):
-            feedStr = ' - ' + event.feedType[:len(event.feedType)-5]
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType[:len(event.feedType)-5] + '[/COLOR]'
         else:
-            feedStr = ' - ' + event.feedType
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType + '[/COLOR]'
         # Build period
         periodStr = ''
         if event.period == 'HALF - ':
@@ -768,17 +779,19 @@ def LIVE_EVENT(session, eventId):
     if awayTeam == '' or homeTeam == '': #indicates special event
         matchupStr = awayTeam + homeTeam
     if liveStream.feedType == 'Home Feed':
-        matchupStr = matchupStr + '*'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
     elif liveStream.feedType == 'Away Feed':
-        matchupStr = awayTeam + '* @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
-    if liveStream.feedType == None or liveStream.feedType == '' or liveStream.feedType == 'Home Feed' or liveStream.feedType == 'Away Feed':
+    if liveStream.feedType == 'Home Feed' or liveStream.feedType == 'Away Feed':
         feedStr = ''
+    elif liveStream.feedType == None or liveStream.feedType == '':
+        feedStr = ' - ' + 'N/A'
     elif liveStream.feedType.endswith(' Feed'):
-        feedStr = ' - ' + liveStream.feedType[:len(liveStream.feedType)-5]
+        feedStr = ' - ' + '[COLOR lightgreen]' + liveStream.feedType[:len(liveStream.feedType)-5] + '[/COLOR]'
     else:
-        feedStr = ' - ' + liveStream.feedType
+        feedStr = ' - ' + '[COLOR lightgreen]' + liveStream.feedType + '[/COLOR]'
     # Build period
     periodStr = ''
     if liveStream.period == 'HALF - ':
@@ -875,6 +888,131 @@ def LIVE_FINALEVENT(session, year, month, day, team, feedType):
             dateStr = ' - ' + datetime.date(year, month, day).strftime('%d %b \'%y')
 
             ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, event.eventId, event.feedType, dateStr)
+
+# Method to draw the live screen
+# which scrapes the external source and presents
+# a list of current day events
+def LIVEEVENT(session):
+    print 'LIVEEVENT(session)'
+
+    # Find live events
+    events = ballstreams.liveEvents(session)
+
+    totalItems = len(events) + 2
+
+    if totalItems > 13:
+        # Add refresh button
+        refreshParams = {
+            'refresh': 'True'
+        }
+        utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    buildLiveStreams(session, events, totalItems, 1) # favorite team
+    buildLiveStreams(session, events, totalItems, 2) # live/coming soon
+    buildLiveStreams(session, events, totalItems, 3) # final
+
+    # Add refresh button
+    refreshParams = {
+        'refresh': 'True'
+    }
+    utils.addDir(addon.getLocalizedString(100015), mode, '', refreshParams, totalItems, showfanart)
+
+    setViewMode()
+
+# Method to build live event streams
+# @param filter 0 = ALL, 1 = favorite only, 2 = live/comingSoon only, 3 = final only
+def buildLiveStreams(session, events, totalItems, filter):
+
+    for event in events:
+        # skip condition 1
+        if filter == 1 and not (event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+        # skip condition 2
+        if filter == 2 and (event.isFinal or event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+        # skip condition 3
+        elif filter == 3 and (not event.isFinal or event.homeTeam == session.favteam or event.awayTeam == session.favteam):
+            continue
+
+        # Build prefix
+        prefix = '[COLOR blue][B][LIVE][/B][/COLOR] '
+        if event.isFuture:
+            prefix = '[COLOR lightblue][Coming Soon][/COLOR] '
+        elif event.isFinal:
+            prefix = '[Final] '
+        # Build matchup
+        homeTeam = event.homeTeam if not shortNames else ballstreams.shortTeamName(event.homeTeam, addonPath)
+        awayTeam = event.awayTeam if not shortNames else ballstreams.shortTeamName(event.awayTeam, addonPath)
+        matchupStr = awayTeam + ' @ ' + homeTeam
+        if awayTeam == '' or homeTeam == '': # Indicates special event
+            matchupStr = awayTeam + homeTeam
+        if event.feedType == 'Home Feed':
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+        elif event.feedType == 'Away Feed':
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+        # Build feedStr
+        feedStr = ''
+        if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
+            feedStr = ''
+        elif event.feedType == None or event.feedType == '':
+            feedStr = ' - ' + 'N/A'
+        elif event.feedType.endswith(' Feed'):
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType[:len(event.feedType)-5] + '[/COLOR]'
+        else:
+            feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType + '[/COLOR]'
+        # Build period
+        periodStr = ''
+        if event.period == 'HALF - ':
+            periodStr = ' - HALF'
+        elif event.period != '':
+            periodStr = ' - ' + event.period if event.period != None else ''
+        # Build score
+        homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
+        awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
+        scoreStr = ' - ' + awayScore + '-' + homeScore if showscores and not event.isFuture else ''
+        # Build start time
+        startTimeStr = ''
+        if periodStr == '':
+            startTimeStr = ' - ' + event.startTime
+        # Build title
+        title = prefix + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + feedStr
+        if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
+            title = prefix + '[COLOR red][B]' + event.event + ': ' + matchupStr + scoreStr + periodStr + startTimeStr + feedStr + '[/B][/COLOR]'
+
+        if event.isFinal:
+            now = ballstreams.adjustedDateTime()
+            team = event.homeTeam if event.homeTeam != None and event.homeTeam != '' else event.awayTeam
+            params = {
+                'year': str(now.year),
+                'month': str(now.month),
+                'day': str(now.day),
+                'team': str(team),
+                'feedType': str(event.feedType)
+            }
+            print str(params)
+            utils.addDir(title, utils.Mode.LIVE_FINALEVENT, '', params, totalItems, showfanart)
+        elif event.isFuture:
+            refreshParams = {
+                'refresh': 'True'
+            }
+            utils.addDir(title, mode, '', refreshParams, totalItems, showfanart)
+        else:
+            # Add links
+            if truelive and resolution != 'SD Only' and event.trueLiveHD != None:
+                suffix = ' [TrueLive HD]'
+                utils.addLink(title + suffix, event.trueLiveHD, '', totalItems, showfanart)
+            if truelive and resolution != 'HD Only' and event.trueLiveSD != None:
+                suffix = ' [TrueLive SD]'
+                utils.addLink(title + suffix, event.trueLiveSD, '', totalItems, showfanart)
+            if istream and resolution != 'SD Only' and event.hdUrl != None:
+                suffix = ' [iStream HD]'
+                utils.addLink(title + suffix, event.hdUrl, '', totalItems, showfanart)
+            if istream and resolution != 'HD Only' and event.sdUrl != None:
+                suffix = ' [iStream SD]'
+                utils.addLink(title + suffix, event.sdUrl, '', totalItems, showfanart)
+            if istream and resolution == 'All' and event.srcUrl != None:
+                suffix = ' [iStream]'
+                utils.addLink(title + suffix, event.srcUrl, '', totalItems, showfanart)
 
 # Method to populate recent events
 # which scrapes the external source and presents
@@ -1055,6 +1193,10 @@ elif mode == utils.Mode.LIVE_EVENT:
     cacheToDisc = False
 elif mode == utils.Mode.LIVE_FINALEVENT:
     LIVE_FINALEVENT(session, year, month, day, team, feedType)
+elif mode == utils.Mode.LIVEEVENT:
+    LIVEEVENT(session)
+    updateListing = refresh
+    cacheToDisc = False
 
 # Signal end of directory
 xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc = cacheToDisc, updateListing = updateListing)

@@ -1,3 +1,7 @@
+[b]3.0.3[/b]
+- Added: Alternate Live category added which directly displays streams at the event level
+- Changed: Display light green to indicate feed type (home or away) instead of the difficult to see asterisk
+
 [b]3.0.2[/b]
 - Fixed: Script error addressed in default script
 
