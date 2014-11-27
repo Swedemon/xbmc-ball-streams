@@ -1,4 +1,4 @@
-DOWNLOAD XBMC BALL STREAMS HERE
+DOWNLOAD XBMC BALL STREAMS
 ===============================
 
 Download the latest release here for [Gotham or Later](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/plugin.video.xbmc-ball-streams-gotham-3.0.3.zip "Gotham or Later") or [Pre Gotham](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/plugin.video.xbmc-ball-streams-frodo-3.0.3.zip "Pre Gotham").  Also, download the [Ballstreams Repository](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/repository.xbmc-ball-streams-0.0.1.zip) to keep your addon up to date.
