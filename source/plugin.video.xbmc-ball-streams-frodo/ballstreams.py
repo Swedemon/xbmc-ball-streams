@@ -5,7 +5,7 @@ import urllib, urllib2, datetime, time, json, os
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # Set debug to True to print API results to the xbmc.log
-API_DEBUG = True
+API_DEBUG = False
 
 # Represents a session class which contains a users login
 # session information from ballstreams
