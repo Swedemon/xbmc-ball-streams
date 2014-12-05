@@ -1,3 +1,6 @@
+[b]3.0.4[/b]
+- Changed: Asterisk is added back upon request
+
 [b]3.0.3[/b]
 - Added: Alternate Live category added which directly displays streams at the event level
 - Changed: Display light green to indicate feed type (home or away) instead of the difficult to see asterisk

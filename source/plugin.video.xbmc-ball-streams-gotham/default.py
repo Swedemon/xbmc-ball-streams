@@ -153,9 +153,9 @@ def buildOnDemandEvents(session, events, totalItems, filter):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
         elif event.feedType == 'Away Feed':
-            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
         if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
@@ -202,9 +202,9 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY_EVENT(session, eventId, feedType, dateStr):
     if awayTeam == '' or homeTeam == '': # Indicates special event
         matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
-        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
     elif feedType == 'Away Feed':
-        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
     if feedType == 'Home Feed' or feedType == 'Away Feed':
@@ -448,9 +448,9 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
         elif event.feedType == 'Away Feed':
-            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
         if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
@@ -581,9 +581,9 @@ def ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr):
     if awayTeam == '' or homeTeam == '': # Indicates special event
         matchupStr = awayTeam + homeTeam
     if feedType == 'Home Feed':
-        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
     elif feedType == 'Away Feed':
-        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
     if feedType == 'Home Feed' or feedType == 'Away Feed':
@@ -700,9 +700,9 @@ def buildLiveEvents(session, events, totalItems, filter):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
         elif event.feedType == 'Away Feed':
-            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
         if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
@@ -779,9 +779,9 @@ def LIVE_EVENT(session, eventId):
     if awayTeam == '' or homeTeam == '': #indicates special event
         matchupStr = awayTeam + homeTeam
     if liveStream.feedType == 'Home Feed':
-        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+        matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
     elif liveStream.feedType == 'Away Feed':
-        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+        matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
     # Build feedStr
     feedStr = ''
     if liveStream.feedType == 'Home Feed' or liveStream.feedType == 'Away Feed':
@@ -947,9 +947,9 @@ def buildLiveStreams(session, events, totalItems, filter):
         if awayTeam == '' or homeTeam == '': # Indicates special event
             matchupStr = awayTeam + homeTeam
         if event.feedType == 'Home Feed':
-            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]'
+            matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
         elif event.feedType == 'Away Feed':
-            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]' + ' @ ' + homeTeam
+            matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
         # Build feedStr
         feedStr = ''
         if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
