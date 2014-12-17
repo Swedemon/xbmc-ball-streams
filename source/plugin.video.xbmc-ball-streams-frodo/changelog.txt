@@ -1,3 +1,7 @@
+[b]3.0.5[/b]
+- Added: Live setting added to customize live screen (previously live alternate)
+- Changed: Settings names updated
+
 [b]3.0.4[/b]
 - Changed: Asterisk is added back upon request
 
