@@ -1,7 +1,7 @@
 import urllib, urllib2, datetime, time, json, os
 
 # xbmc-ball-streams
-# author: craig mcnicholas, andrew wise (since v2.8.2)
+# author: craig mcnicholas, swedemon (since v2.8.2)
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # Set debug to True to print API results to the xbmc.log

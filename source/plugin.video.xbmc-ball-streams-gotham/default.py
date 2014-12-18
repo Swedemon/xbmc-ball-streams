@@ -3,7 +3,7 @@ import ballstreams, utils
 import os, datetime, threading, random, time
 
 # xbmc-ball-streams
-# author: craig mcnicholas, andrew wise
+# author: craig mcnicholas, swedemon
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # deals with a bug where errors are thrown 

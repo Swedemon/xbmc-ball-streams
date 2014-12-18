@@ -3,7 +3,7 @@ import urllib
 import sys
 
 # xbmc-ball-streams
-# author: craig mcnicholas, andrew wise
+# author: craig mcnicholas, swedemon
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
 # Represents an enumeration for application modes
