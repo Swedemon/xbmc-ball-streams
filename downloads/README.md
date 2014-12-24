@@ -13,3 +13,5 @@ The Ball Hockey Streams plugin currently offers the following set of features.
 * Searching for streams by date
 * Searching for streams by team
 * List upcoming streams
+
+Show your appreciation, [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZAASWCLWG8RTU) to keep the enhancements and support coming.
