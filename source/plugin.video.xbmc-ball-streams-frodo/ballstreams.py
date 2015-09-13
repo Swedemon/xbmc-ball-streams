@@ -706,7 +706,7 @@ def onDemandEventStreams(session, eventId, location=None):
     homeTeam = js['homeTeam']
     awayTeam = js['awayTeam']
     flashSRC = js['FlashSRC']
-    windowsMediaSRC = js['WindowsMediaSRC']
+    windowsMediaSRC = None #js['WindowsMediaSRC'] #2015-09-13 fix
     iStreamSRC = js['iStreamSRC']
     hlsSRC = js['hlsSRC']
 
