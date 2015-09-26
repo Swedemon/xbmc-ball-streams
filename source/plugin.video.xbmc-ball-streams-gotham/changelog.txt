@@ -1,3 +1,7 @@
+[b]3.0.8[/b]
+- Added: Support for Medium Quality (MD) Live streams - not supported on front screen currently thru API
+- Changed:  Resolution moved separately to Live and OnDemand settings
+
 [b]3.0.7[/b]
 - Fixed: Fix to address recent changes to API on-demand streams
 

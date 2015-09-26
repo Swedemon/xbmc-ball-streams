@@ -6,6 +6,9 @@ import sys
 # author: craig mcnicholas, swedemon
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
+addonId = 'plugin.video.xbmc-ball-streams-gotham'
+dataPath = 'special://profile/addon_data/' + addonId
+
 # Represents an enumeration for application modes
 class Mode:
     HOME = 1
@@ -74,10 +77,10 @@ def parseParamString(params, key):
 # @return a flag indicating success
 def addLink(name, url, image, totalItems = None, showfanart = None):
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/plugin.video.xbmc-ball-streams-gotham/Basketball-Ball-icon.png')
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/' + addonId + '/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
-        item.setProperty( "Fanart_Image", 'special://home/addons/plugin.video.xbmc-ball-streams-gotham/fanart.jpg' )
+        item.setProperty( "Fanart_Image", 'special://home/addons/' + addonId + '/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item)
     else:
@@ -97,10 +100,10 @@ def addDir(name, mode, image, params, totalItems = None, showfanart = None):
         for k, v in params.iteritems():
             url += '&' + k + '=' + urllib.quote_plus(v)
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/plugin.video.xbmc-ball-streams-gotham/Basketball-Ball-icon.png')
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/' + addonId + '/Basketball-Ball-icon.png')
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
-        item.setProperty( "Fanart_Image", 'special://home/addons/plugin.video.xbmc-ball-streams-gotham/fanart.jpg' )
+        item.setProperty( "Fanart_Image", 'special://home/addons/' + addonId + '/fanart.jpg' )
     if totalItems == None:
         ok = xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = url, listitem = item, isFolder = True)
     else:

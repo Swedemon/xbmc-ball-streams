@@ -9,17 +9,18 @@
         <setting id="showfanart" type="bool" label="100034" default="false" />
     </category>
 	<category label="Live">
+        <setting id="liveresolution" type="labelenum" label="100031" values="All|HD Only|MD Only|SD Only" default="All" />
         <setting id="showscores" type="bool" label="100032" default="true" />
-        <setting id="showaltlive" type="bool" label="Display Streams on Start Screen" default="false" />
+        <setting id="showaltlive" type="bool" label="Display Streams on Start Screen (no MD streams)" default="false" />
     </category>
 	<category label="OnDemand">
+        <setting id="ondemandresolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
         <setting id="showhighlight" type="bool" label="100036" default="true" />
         <setting id="showcondensed" type="bool" label="100039" default="false" />
         <setting id="daysback" type="labelenum" label="100038" values="0|1|2|3|5|7|Disable" default="1" />
     </category>
     <category label="Stream">
         <setting id="location" type="labelenum" label="100025" values="Auto|Asia|Australia|Europe|North America - Central|North America - East|North America - East Canada|North America - West" default="Auto" />
-        <setting id="resolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
         <setting id="flash" type="bool" label="100017" default="false" />
         <setting id="truelive" type="bool" label="100026" default="true" />
         <setting id="istream" type="bool" label="100016" default="true" />
