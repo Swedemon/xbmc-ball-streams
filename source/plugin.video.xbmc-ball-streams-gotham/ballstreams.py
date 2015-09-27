@@ -878,10 +878,10 @@ def liveEvents(session):
         isPlaying = item['isPlaying']
         feedType = item['feedType']
         trueLiveHD = item['TrueLiveHD']
-        trueLiveMD = None #item['TrueLiveMD'] not supported yet
+        trueLiveMD = item['TrueLiveMD']
         trueLiveSD = item['TrueLiveSD']
         hdUrl = item['hdUrl']
-        mdUrl = None #item['mdUrl'] not supported yet
+        mdUrl = item['mdUrl']
         sdUrl = item['sdUrl']
         srcUrl = item['srcUrl']
 
