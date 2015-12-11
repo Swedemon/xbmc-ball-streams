@@ -95,7 +95,7 @@ msgid "forgot to close a stream on another device."
 msgstr ""
 
 msgctxt "#100024"
-msgid "For help contact ballstreams.com"
+msgid "For help contact website"
 msgstr ""
 
 msgctxt "#100025"
@@ -164,4 +164,16 @@ msgstr ""
 
 msgctxt "#100041"
 msgid "Enable HLS (m3u8)"
+msgstr ""
+
+msgctxt "#100042"
+msgid "Enable League Filter"
+msgstr ""
+
+msgctxt "#100043"
+msgid "Enable matchup icons"
+msgstr ""
+
+msgctxt "#100044"
+msgid "Enable on-demand scores"
 msgstr ""

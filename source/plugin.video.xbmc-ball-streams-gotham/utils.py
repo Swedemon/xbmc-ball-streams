@@ -1,8 +1,8 @@
 import xbmcgui, xbmcplugin
-import urllib
+import urllib, httplib
+from urlparse import urlparse
 import sys
 
-# xbmc-ball-streams
 # author: craig mcnicholas, swedemon
 # contact: craig@designdotworks.co.uk, zergcollision@gmail.com
 
@@ -69,15 +69,28 @@ def parseParamString(params, key):
         pass
     return value
 
+def urlExists(url):
+    try:
+      p = urlparse(url)
+      conn = httplib.HTTPConnection(p.netloc)
+      conn.request('HEAD', p.path)
+      resp = conn.getresponse()
+      status = resp.status
+    except:
+      status = 404
+    return status != 404
+    
+
 # Method to add a link to the xbmc gui
 # @param name the name of the link to show
 # @param url the url of the link
 # @param image the image to display as the thumbnail
 # @param totalItems [optional] the total number of items to add to show progress
 # @return a flag indicating success
-def addLink(name, url, image, totalItems = None, showfanart = None):
+def addLink(name, url, image, totalItems = None, showfanart = None, icon = None):
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = 'special://home/addons/' + addonId + '/Basketball-Ball-icon.png')
+    thumbnail = icon.save() if (icon) else 'special://home/addons/' + addonId + '/Main_icon.png'
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultVideo.png', thumbnailImage = thumbnail)
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
         item.setProperty( "Fanart_Image", 'special://home/addons/' + addonId + '/fanart.jpg' )
@@ -94,13 +107,16 @@ def addLink(name, url, image, totalItems = None, showfanart = None):
 # @param params a dictionary of params to append
 # @param totalItems [optional] the total number of items to add to show progress
 # @return a flag indicating success
-def addDir(name, mode, image, params, totalItems = None, showfanart = None):
+def addDir(name, mode, image, params, totalItems = None, showfanart = None, icon = None):
+    thumbnail = icon.save() if (icon) else 'special://home/addons/' + addonId + '/Main_icon.png'
+    if '<< Refresh >>' in name:
+        thumbnail = 'special://home/addons/' + addonId + '/Refresh_icon.png'
     url = sys.argv[0] + "?mode=" + str(mode)
     if params != None:
         for k, v in params.iteritems():
             url += '&' + k + '=' + urllib.quote_plus(v)
     ok = True
-    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = 'special://home/addons/' + addonId + '/Basketball-Ball-icon.png')
+    item = xbmcgui.ListItem(name, iconImage = 'DefaultFolder.png', thumbnailImage = thumbnail)
     item.setInfo(type = 'Video', infoLabels = { 'Title': name })
     if showfanart:
         item.setProperty( "Fanart_Image", 'special://home/addons/' + addonId + '/fanart.jpg' )

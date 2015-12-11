@@ -5,6 +5,7 @@
         <setting id="password" type="text" label="100002" default="" option="hidden" />
         <setting type="sep" />
         <setting id="shortnames" type="bool" label="100020" default="true" />
+        <setting id="showicons"  type="bool" label="100043" default="false" />
         <setting id="viewmode" type="labelenum" label="100037" values="Default|Big List|List|Thumbnail" default="Default" />
         <setting id="showfanart" type="bool" label="100034" default="false" />
     </category>
@@ -15,6 +16,7 @@
     </category>
 	<category label="OnDemand">
         <setting id="ondemandresolution" type="labelenum" label="100031" values="All|HD Only|SD Only" default="All" />
+        <setting id="showscoresondemand" type="bool" label="100044" default="false" />
         <setting id="showhighlight" type="bool" label="100036" default="true" />
         <setting id="showcondensed" type="bool" label="100039" default="false" />
         <setting id="daysback" type="labelenum" label="100038" values="0|1|2|3|5|7|Disable" default="1" />
