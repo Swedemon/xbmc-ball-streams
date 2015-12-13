@@ -7,7 +7,7 @@ import urllib, urllib2, datetime, time, json, os, traceback
 API_DEBUG = False
 # The applications api keys, generated @ website
 API_KEY = 'd4b03595a0691edbf89347a132fb5d28'
-SCORE_API_KEY = '87c8c1239b938d7ffa78620fe52d45b7'
+SCORES_API_KEY = '87c8c1239b938d7ffa78620fe52d45b7'
 WEBURL = 'ballstreams.com'
 WEBURL_PREFIX = 'www4'
 HEADER_NAME = 'xbmc-ball-streams'
