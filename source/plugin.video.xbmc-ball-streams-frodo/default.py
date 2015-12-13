@@ -14,7 +14,7 @@ else:
 
 # deals with a bug where errors are thrown 
 # if data directory does not exist.
-addonId = 'plugin.video.xbmc-ball-streams-frodo'
+addonId = 'plugin.video.xbmc-ball-streams-gotham'
 dataPath = 'special://profile/addon_data/' + addonId
 if not os.path.exists: os.makedirs(dataPath)
 addon = xbmcaddon.Addon(id = addonId)
@@ -282,6 +282,10 @@ def buildOnDemandEvents(session, events, totalItems, filter):
             matchupStr = awayTeam + ' @ ' + '[COLOR lightgreen]' + homeTeam + '[/COLOR]*'
         elif event.feedType == 'Away Feed':
             matchupStr = '[COLOR lightgreen]' + awayTeam + '[/COLOR]*' + ' @ ' + homeTeam
+        # Build score
+        homeScore = event.homeScore if event.homeScore != None and len(event.homeScore)>0 else '0'
+        awayScore = event.awayScore if event.awayScore != None and len(event.awayScore)>0 else '0'
+        scoreStr = ' - ' + awayScore + '-' + homeScore if showScoresOnDemand else ''
         # Build feedStr
         feedStr = ''
         if event.feedType == 'Home Feed' or event.feedType == 'Away Feed':
@@ -293,7 +297,7 @@ def buildOnDemandEvents(session, events, totalItems, filter):
         else:
             feedStr = ' - ' + '[COLOR lightgreen]' + event.feedType + '[/COLOR]'
         # Build title
-        title = event.event + ': ' + matchupStr + dateStr + feedStr
+        title = event.event + ': ' + matchupStr + scoreStr + dateStr + feedStr
         if event.homeTeam == session.favteam or event.awayTeam == session.favteam:
             title = '[COLOR red][B]' + title + '[/B][/COLOR]'
 
