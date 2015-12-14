@@ -87,7 +87,7 @@ class Icon():
         self.image = icon
 
     def filename(self):
-        return os.path.join(tempfile.gettempdir(), 'hs_logo' + str(uuid.uuid4())[:8] + '.png')
+        return os.path.join(addonPath,'resources','data','hs_logo' + str(uuid.uuid4())[:8] + '.png')
 
     def save(self):
         try:
@@ -108,13 +108,12 @@ def createIcon(homeTeam, awayTeam, header, feedType = None, homeScore = None, aw
 def iconCleanup():
     try:
       tempdir = tempfile.gettempdir()
-      for png in glob.glob(os.path.join(tempfile.gettempdir(),'hs_logo*.png')):
+      for png in glob.glob(os.path.join(addonPath,'resources','data','hs_logo*.png')):
         os.remove(png)
     except:
       e = sys.exc_info()[0]
       print 'iconCleanup failed: %s' % e
       pass
-
 
 # Method to get the short team name of a team
 # @param teamName the team name to get the shortened version for

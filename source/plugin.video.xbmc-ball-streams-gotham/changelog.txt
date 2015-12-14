@@ -1,3 +1,6 @@
+[b]3.1.9[/b]
+- Fixed: Addressed icon saving issues by pointing images into addon subfolder
+
 [b]3.1.8[/b]
 - Added: OnDemand scores support
 
