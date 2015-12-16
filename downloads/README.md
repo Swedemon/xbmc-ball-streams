@@ -1,7 +1,7 @@
 DOWNLOAD XBMC BALL STREAMS
 ===============================
 
-Download the [latest release here](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/plugin.video.xbmc-ball-streams-gotham-3.1.9.zip).
+Download the [latest release here](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/plugin.video.xbmc-ball-streams-gotham-3.2.0.zip).
 
 Alternatively, for automatic updates download the [Ballstreams Repository](https://github.com/Swedemon/xbmc-ball-streams/raw/master/downloads/repository.xbmc-ball-streams-0.0.1.zip) and install the addon via the repo.
 

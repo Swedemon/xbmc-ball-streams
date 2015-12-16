@@ -1,0 +1,252 @@
+[b]3.2.0[/b]
+- Changed: Improved working indicator logic
+- Fixed: Addressed missing icons bug
+
+[b]3.1.9[/b]
+- Fixed: Addressed icon saving issues by pointing images into addon subfolder
+
+[b]3.1.8[/b]
+- Added: OnDemand scores support
+
+[b]3.1.7[/b]
+- Added: Icon support for other leagues - seeking volunteer to provide other logos.
+- Added: Refresh icon added.
+- Changed:  Assorted minor cosmetic changes to icons.
+
+[b]3.1.6[/b]
+- Fixed: Removed ++ from actionbronson merge.
+
+[b]3.1.5[/b]
+- Fixed: Startup bug
+- Added: Improved support for highlights HD up to 4500 kbps, another hack fix.
+
+[b]3.1.4[/b]
+- Fixed: PIL imaging import wrapped in try for unsupported platforms.
+- Fixed: improved support for condensed HD to 5000kbps.  This is a hack fix for now.
+- Added: Scores support for by-date ondemand in icons.  Enabled via settings.
+
+[b]3.1.3[/b]
+- Added: Support for condensed HD.  This is a hack fix for now.
+
+[b]3.1.2[/b]
+- Added: Support for live period timings.
+- Added: Cleared up header text with logos instead
+- Fixed: Condensed and highlight support.
+
+[b]3.1.1[/b]
+- Changed:  Added additional exception handling if icon cleanup has write issues
+
+[b]3.1.0[/b]
+- Added: Icon support.
+
+[b]3.0.9[/b]
+- Added: Support for Medium Quality (MD) Live streams on the front screen option
+
+[b]3.0.8[/b]
+- Added: Support for Medium Quality (MD) Live streams - not supported on front screen currently thru API
+- Changed:  Resolution moved separately to Live and OnDemand settings
+
+[b]3.0.7[/b]
+- Fixed: Fix to address recent changes to API on-demand streams
+
+[b]3.0.6[/b]
+- Changed: Moved Live Streams to the front page (one less click!)
+
+[b]3.0.5[/b]
+- Added: Live setting added to customize live screen (previously live alternate)
+- Changed: Settings names updated
+
+[b]3.0.4[/b]
+- Changed: Asterisk is added back upon request
+
+[b]3.0.3[/b]
+- Added: Alternate Live category added which directly displays streams at the event level
+- Changed: Display light green to indicate feed type (home or away) instead of the difficult to see asterisk
+
+[b]3.0.2[/b]
+- Fixed: Script error addressed in default script
+
+[b]3.0.1[/b]
+- Changed: On-demand by date displays favorite team at the top
+- Changed: Live event displays favorite team at the top
+
+[b]3.0.0[/b]
+- Added: HLS SD option added as derived from HLS HD streams
+- Fixed: Omit iStream when it is redundant to HD or SD equivalent
+
+[b]2.9.9[/b]
+- Added: HLS stream option added applies to on-demand events
+- Changed: Hide flash stream when duplicate of istream
+- Changed: Renamed dvr streams to match as the API defines them: nondvr
+- Fixed: Condensed game bug fixed
+
+[b]2.9.8[/b]
+- Added: Added refresh option at the top of live events when the list is large
+- Added: All teams option added under by team category
+- Added: Choosing final event now leads directly to on-demand streams
+- Added: Custom date search to on-demand section
+- Added: Events will now display source of non-home/away feeds when available
+- Added: OnDemand team filter includes similar events, i.e. NHL includes NHL preseason
+- Added: PPV added as optional event filter
+- Added: Progressive stream support added - expert setting in beta
+- Added: Refresh added at the top when several live events displayed
+- Changed: Coming soon events also display above final events
+
+[b]2.9.7[/b]
+- Added: Choosing final event now leads directly to on-demand streams
+- Added: Added refresh option at the top of live events when the list is large
+- Changed: Live events now show at the top
+- Changed: Flash events now specify HD or SD when stream URL indicates
+- Fixed: Eliminated defunct progressive streams
+- Fixed: Fixed bug that prevented condensed game building
+
+[b]2.9.6[/b]
+- Changed: Eliminate redundant iStream when duplicates HD or SD stream
+- Added: Refresh added at the top when several live events displayed
+- Fixed: Standardized plugin directory name
+
+[b]2.9.5[/b]
+- Added: Custom date search to on-demand section
+- Added: All teams option added under by team category
+- Added: OnDemand team filter includes similar events i.e. NHL includes NHL preseason
+- Added: Progressive stream support added - expert setting in beta
+- Changed: View Mode includes thumbnail and extends to all directories
+- Fixed: Removed league filter within on-demand byteam event filter where it didn't make sense
+
+[b]2.9.4[/b]
+- Fixed: Eliminate condensed games that duplicate highlights (which seems to be all the time)
+- Fixed: Fixed logic to correct highlight building
+
+[b]2.9.3[/b]
+- Added: Favorite team is bolded - defined on website
+- Added: New league filter setting
+- Fixed: Tweaks added to correctly determine status of live games
+- Fixed: League filter carries into team events screen
+
+[b]2.9.2[/b]
+- Added: Highlights supported - display setting included
+- Added: Condensed Games supported - display setting included
+- Added: Initial on-demand screen shows recent events - display setting included
+- Added: Setting added to set view mode for event and stream screens
+- Changed: Title dates now include year
+
+[b]2.9.1[/b]
+- Added: Australia location added.
+- Added: Added date to on-demand stream titles
+- Fixed: Live and on-demand special event titles supported
+
+[b]2.9.0[/b]
+- Added: Restructured live events and streams to improve performance
+- Added: Restructured on-demand events and streams to improve performance
+- Added: Live DVR stream option added, although rewind not currently possible
+- Changed: Team events now display dates on event page
+- Fixed: Minor fixes made to stream filtering
+- Fixed: Corrected a live event status issue
+
+[b]2.8.8[/b]
+- Added: Display score option added to settings for live games
+- Added: Click final live games searches for current day on-demand games
+- Added: Setting to toggle display of fanart
+- Changed: Skip on-demand year filter for faster access
+- Changed: Display league with on-demand team name
+- Changed: Reorganize stream settings as a separate category
+
+[b]2.8.7[/b]
+- Changed: All API calls are now encrypted (https)
+- Fixed: Corrected server locations Asia and Europe
+
+[b]2.8.6[/b]
+- Added: Indicate home or away feed with asterisk for inactive events
+- Added: Filter by HD only or SD only option
+- Added: Display main image and fanart.jpg
+- Added: Display score and period for live games
+- Fixed: Also display FINAL after over-time games terminate
+- Fixed: IP Exception failure message properly notifies issue
+- Fixed: Password is hidden
+
+[b]2.8.5[/b]
+- Added: When available indicate home or away feed with asterisk
+- Fixed: Display FINAL when live game streams clear
+
+[b]2.8.4[/b]
+- Added: Include Coming Soon games in Live feed
+- Changed:  Always show full team names in Team archive section
+- Changed:  Display TrueLive instead of RTMP and sort HD first
+
+[b]2.8.3[/b]
+- Changed: short team names for NBA updated
+
+[b]2.8.2[/b]
+- Fixed: iStream SD fixed for live events
+
+[b]2.8.1[/b]
+- Added: north america - east canada as a streaming location
+
+[b]2.8.0[/b]
+- Removed: ip check removed got the go-ahead from website
+
+[b]2.7.1[/b]
+- Fixed: api change now returning null for streams and empty dates
+
+[b]2.7.0[/b]
+- Added: location setting so users can define which servers they want to use
+- Added: rtmp stream support, can be enabled/disabled via settings
+- Added: setting to enable/disable wmv stream listing
+- Changed: removed strings.xml for new string.po format in xbmc
+
+[b]2.6.0[/b]
+- Added: poll for ip check, required for misuse of multiple accounts
+- Fixed: live events empty response now returns no items in the ui instead of error
+
+[b]2.5.0[/b]
+- Added: check for valid stream url's
+- Added: sd and hd istreams when available
+- Changed: short team names is now defaulted to off
+
+[b]2.4.0[/b]
+- Added: short team name lookup, shows friendly names in the ui so they are not as long
+
+[b]2.3.0[/b]
+- Added: fix for login exceptions when invalid account was used, displays a nice message now
+- Added: flash support (thanks to Maciej Ratowski)
+
+[b]2.2.0[/b]
+- Added: fix ip exception which is now generated upon successful login
+
+[b]2.1.2[/b]
+- Added: fix for favourite team removal from api
+
+[b]2.1.1[/b]
+- Added: fix for problem api not returning empty streams array for events
+
+[b]2.1.0[/b]
+- Added: support for istreams
+- Added: support for flash streams (these shouldn't work until xbmc can play them)
+
+[b]2.0.0[/b]
+- Added: support for the new api, this should make the plugin more reliable
+- Added: refresh button to the live streams page to reload the data without having to navigate backwards and forwards
+- Added: check for account membership status, if a non-primum user logs in they are warned via a message
+
+[b]1.3.0[/b]
+- Fixed: broken live streams due to website change credit goes to NBtX
+
+[b]1.2.2[/b]
+- Fixed: login failure due to website change
+
+[b]1.2.1[/b]
+- Fixed: failure to open settings when empty on startup
+
+[b]1.2.0[/b]
+- Added: support for live and upcoming streams
+- Changed: background fanart
+- Added: license file
+- Added: localization support
+
+[b]1.1.0[/b]
+- Added: support for searching archived streams by team
+- Added: background fanart
+
+[b]1.0.0[/b]
+- Added: support for archived streams
+- Added: support for searching archived streams by date
