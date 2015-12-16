@@ -127,28 +127,22 @@ def shortTeamName(teamName):
     else:
         return teamName # It doesn't return original
 
-
 # Method to draw the home screen
 def HOME():
     print 'HOME()'
-    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, 2, showfanart)
+    utils.addDir(addon.getLocalizedString(100005), utils.Mode.ONDEMAND, '', None, None, showfanart)
     if showaltlive:
-        # utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVEEVENT, '', None, 2, showfanart)
         LIVEEVENT(session)
     else:
-        # utils.addDir(addon.getLocalizedString(100006), utils.Mode.LIVE, '', None, 2, showfanart)
         LIVE(session)
-
-        updateListing = refresh
-        cacheToDisc = False
 
     setViewMode()
 
 # Method to draw the archives screen
 def ONDEMAND():
     print 'ONDEMAND()'
-    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, 2, showfanart)
-    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, 2, showfanart)
+    utils.addDir(addon.getLocalizedString(100007), utils.Mode.ONDEMAND_BYDATE, '', None, None, showfanart)
+    utils.addDir(addon.getLocalizedString(100008), utils.Mode.ONDEMAND_BYTEAM, '', None, None, showfanart)
     
     # Append Recent day events
     ONDEMAND_RECENT(session)
@@ -172,7 +166,7 @@ def ONDEMAND_BYDATE(session):
             monthsYears.append(current)
 
     # Count total number of items for ui
-    totalItems = len(monthsYears)
+    totalItems = len(monthsYears) + 1
 
     # Add directories for months
     for monthYear in monthsYears:
@@ -188,7 +182,7 @@ def ONDEMAND_BYDATE(session):
         utils.addDir(date.strftime('%B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH, '', params, totalItems, showfanart)
 
     # Add custom date directory
-    utils.addDir('[ Custom Date ]', utils.Mode.ONDEMAND_BYDATE_CUSTOM, '', None, 2, showfanart)
+    utils.addDir('[ Custom Date ]', utils.Mode.ONDEMAND_BYDATE_CUSTOM, '', None, totalItems, showfanart)
 
     setViewMode()
 
@@ -228,7 +222,7 @@ def ONDEMAND_BYDATE_YEARMONTH(session, year, month):
 # Method to draw the archives by date screen
 # which scrapes the external source and presents
 # a list of on-demand events for a given day
-def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
+def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day, totalItems = 0):
     print 'ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day)'
     print 'Year: ' + str(year)
     print 'Month: ' + str(month)
@@ -242,7 +236,10 @@ def ONDEMAND_BYDATE_YEARMONTH_DAY(session, year, month, day):
         print 'Warning:  No events found for date: ' + str(date) + ' Msg: ' + str(e)
         return
 
-    totalItems = len(events)
+    if totalItems is 0:
+        totalItems = len(events)
+    else:
+        totalItems = totalItems
     
     buildOnDemandEvents(session, events, totalItems, 1) # favorite
     buildOnDemandEvents(session, events, totalItems, 2) # non-favorites
@@ -434,29 +431,6 @@ def ONDEMAND_BYDATE_CUSTOM_YEARMONTH(session, year, month):
     lastMonthDay = datetime.date(nextMonthDay.year, nextMonthDay.month, 1) - datetime.timedelta(days = 1)
     daysBack = int(lastMonthDay.day)
 
-    # COMMENTED THIS OUT - CRASHES XBMC TOO OFTEN EXECUTING TOO MANY API REQUESTS SO QUICKLY
-    # if lastMonthDay < currentDay or currentDay.day > 16:
-        # params = {
-            # 'year': str(year),
-            # 'month': str(month),
-            # 'day': str(16),
-            # 'numberOfDays': str(16)
-        # }
-        # if str(lastMonthDay.day) == '31':
-            # title = '[ Deep Search ' + lastMonthDay.strftime('%B') + ' 16th to ' + str(lastMonthDay.day) + 'st ]'
-        # else:
-            # title = '[ Deep Search ' + lastMonthDay.strftime('%B') + ' 16th to ' + str(lastMonthDay.day) + 'th ]'
-        # utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_CUSTOM_YEARMONTH_RANGE, '', params, 33, showfanart)
-    # if lastMonthDay < currentDay or currentDay.day > 1:
-        # params = {
-            # 'year': str(year),
-            # 'month': str(month),
-            # 'day': str(1),
-            # 'numberOfDays': str(15)
-        # }
-        # title = '[ Deep Search ' + lastMonthDay.strftime('%B') + ' 1st to 15th ]'
-        # utils.addDir(title, utils.Mode.ONDEMAND_BYDATE_CUSTOM_YEARMONTH_RANGE, '', params, 33, showfanart)
-
     for x in range (0, daysBack):
         nextDate = lastMonthDay - datetime.timedelta(days = x)
         if nextDate <= currentDay:
@@ -465,7 +439,7 @@ def ONDEMAND_BYDATE_CUSTOM_YEARMONTH(session, year, month):
                 'month': str(nextDate.month),
                 'day': str(nextDate.day)
             }
-            utils.addDir(nextDate.strftime('%A %d %B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, 33, showfanart)
+            utils.addDir(nextDate.strftime('%A %d %B %Y'), utils.Mode.ONDEMAND_BYDATE_YEARMONTH_DAY, '', params, 31, showfanart)
     
     setViewMode()
 
@@ -1189,7 +1163,7 @@ def ONDEMAND_RECENT(session):
         recentDate = streams.getRecentDateTime(i)
 
         # Build events for day
-        ONDEMAND_BYDATE_YEARMONTH_DAY(session, recentDate.year, recentDate.month, recentDate.day)
+        ONDEMAND_BYDATE_YEARMONTH_DAY(session, recentDate.year, recentDate.month, recentDate.day, 15 * int(daysback)) #15 is daily estimate count
 
         # Increment loop to avoid TO INFINITY AND BEYOND!!
         i += 1
@@ -1326,10 +1300,9 @@ else:
         print 'Error creating an ip exception: ' + str(e)
         utils.showMessage(addon.getLocalizedString(100018), addon.getLocalizedString(100019))
 
-iconCleanup()
-
 # Invoke mode function
 if mode == None or mode == utils.Mode.HOME:
+    iconCleanup()
     HOME()
     updateListing = refresh
     cacheToDisc = False
@@ -1357,20 +1330,12 @@ elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM:
     ONDEMAND_BYTEAM_LEAGUE_TEAM(session, league, team)
 elif mode == utils.Mode.ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT:
     ONDEMAND_BYTEAM_LEAGUE_TEAM_EVENT(session, eventId, feedType, dateStr)
-elif mode == utils.Mode.LIVE:
-    LIVE(session)
-    updateListing = refresh
-    cacheToDisc = False
 elif mode == utils.Mode.LIVE_EVENT:
     LIVE_EVENT(session, eventId)
-    updateListing = refresh
-    cacheToDisc = False
 elif mode == utils.Mode.LIVE_FINALEVENT:
     LIVE_FINALEVENT(session, year, month, day, team, feedType)
 elif mode == utils.Mode.LIVEEVENT:
     LIVEEVENT(session)
-    updateListing = refresh
-    cacheToDisc = False
 
 # Signal end of directory
 xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc = cacheToDisc, updateListing = updateListing)

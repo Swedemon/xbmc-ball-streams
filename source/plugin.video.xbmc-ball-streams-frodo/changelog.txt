@@ -1,3 +1,7 @@
+[b]3.2.0[/b]
+- Changed: Improved working indicator logic
+- Fixed: Addressed missing icons bug
+
 [b]3.1.9[/b]
 - Fixed: Addressed icon saving issues by pointing images into addon subfolder
 
